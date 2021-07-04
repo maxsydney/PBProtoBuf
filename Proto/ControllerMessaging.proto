@@ -1,0 +1,8 @@
+syntax = "proto2";
+
+message ControllerStateMessage {
+  required double propOutput = 1;
+  required double integralOutput = 2;
+  required double derivOutput = 3;
+  required double totalOutput = 4;
+}
