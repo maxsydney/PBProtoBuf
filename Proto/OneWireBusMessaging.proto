@@ -1,5 +1,5 @@
 syntax = "proto3";
-import 'Proto/DS18B20Messaging.proto';
+import 'DS18B20Messaging.proto';
 
 message TemperatureDataMessage {
     double headTemp = 1;

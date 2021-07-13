@@ -29,8 +29,8 @@
  */
 
 // This file is generated. Please do not edit!
-#ifndef PROTO_ONEWIREBUSMESSAGING_H
-#define PROTO_ONEWIREBUSMESSAGING_H
+#ifndef ONEWIREBUSMESSAGING_H
+#define ONEWIREBUSMESSAGING_H
 
 #include <cstdint>
 #include <MessageInterface.h>
@@ -43,7 +43,7 @@
 #include <Errors.h>
 
 // Include external proto definitions
-#include <Proto/DS18B20Messaging.h>
+#include <DS18B20Messaging.h>
 
 
 class TemperatureDataMessage final: public ::EmbeddedProto::MessageInterface
@@ -354,4 +354,4 @@ class DeviceDataMessage final: public ::EmbeddedProto::MessageInterface
 
 };
 
-#endif // PROTO_ONEWIREBUSMESSAGING_H
+#endif // ONEWIREBUSMESSAGING_H

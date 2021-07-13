@@ -29,8 +29,8 @@
  */
 
 // This file is generated. Please do not edit!
-#ifndef PROTO_SENSORMANAGERMESSAGING_H
-#define PROTO_SENSORMANAGERMESSAGING_H
+#ifndef SENSORMANAGERMESSAGING_H
+#define SENSORMANAGERMESSAGING_H
 
 #include <cstdint>
 #include <MessageInterface.h>
@@ -43,7 +43,7 @@
 #include <Errors.h>
 
 // Include external proto definitions
-#include <Proto/DS18B20Messaging.h>
+#include <DS18B20Messaging.h>
 
 
 enum class SensorManagerCmdType : uint32_t
@@ -533,4 +533,4 @@ class AssignSensorCommand final: public ::EmbeddedProto::MessageInterface
 
 };
 
-#endif // PROTO_SENSORMANAGERMESSAGING_H
+#endif // SENSORMANAGERMESSAGING_H

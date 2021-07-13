@@ -1,5 +1,5 @@
 syntax = "proto3";
-import 'Proto/DS18B20Messaging.proto';
+import 'DS18B20Messaging.proto';
 
 enum SensorManagerCmdType {
     CMD_NONE = 0;
