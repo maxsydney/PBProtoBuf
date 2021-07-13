@@ -45,6 +45,483 @@
 // Include external proto definitions
 
 
+enum class ProtoMessageType : uint32_t
+{
+  UNKNOWN = 0,
+  CONTROLLER_STATE = 1,
+  OTHER_MESSAGE = 2
+};
+
+enum class ControllerDataRequestType : uint32_t
+{
+  NONE = 0,
+  TUNING = 1,
+  SETTINGS = 2,
+  PERIPHERAL_STATE = 3
+};
+
+enum class ComponentState : uint32_t
+{
+  OFF_STATE = 0,
+  ON_STATE = 1
+};
+
+enum class PumpMode : uint32_t
+{
+  PUMP_OFF = 0,
+  ACTIVE_CONTROL = 1,
+  MANUAL_CONTROL = 2
+};
+
+template<uint32_t payload_LENGTH>
+class MessageWrapper final: public ::EmbeddedProto::MessageInterface
+{
+  public:
+    MessageWrapper() = default;
+    MessageWrapper(const MessageWrapper& rhs )
+    {
+      set_type(rhs.get_type());
+      set_payload(rhs.get_payload());
+    }
+
+    MessageWrapper(const MessageWrapper&& rhs ) noexcept
+    {
+      set_type(rhs.get_type());
+      set_payload(rhs.get_payload());
+    }
+
+    ~MessageWrapper() override = default;
+
+    enum class id : uint32_t
+    {
+      NOT_SET = 0,
+      TYPE = 1,
+      PAYLOAD = 2
+    };
+
+    MessageWrapper& operator=(const MessageWrapper& rhs)
+    {
+      set_type(rhs.get_type());
+      set_payload(rhs.get_payload());
+      return *this;
+    }
+
+    MessageWrapper& operator=(const MessageWrapper&& rhs) noexcept
+    {
+      set_type(rhs.get_type());
+      set_payload(rhs.get_payload());
+      return *this;
+    }
+
+    inline void clear_type() { type_ = static_cast<ProtoMessageType>(0); }
+    inline void set_type(const ProtoMessageType& value) { type_ = value; }
+    inline void set_type(const ProtoMessageType&& value) { type_ = value; }
+    inline const ProtoMessageType& get_type() const { return type_; }
+    inline ProtoMessageType type() const { return type_; }
+
+    inline void clear_payload() { payload_.clear(); }
+    inline ::EmbeddedProto::FieldBytes<payload_LENGTH>& mutable_payload() { return payload_; }
+    inline void set_payload(const ::EmbeddedProto::FieldBytes<payload_LENGTH>& rhs) { payload_.set(rhs); }
+    inline const ::EmbeddedProto::FieldBytes<payload_LENGTH>& get_payload() const { return payload_; }
+    inline const uint8_t* payload() const { return payload_.get_const(); }
+
+
+    ::EmbeddedProto::Error serialize(::EmbeddedProto::WriteBufferInterface& buffer) const override
+    {
+      ::EmbeddedProto::Error return_value = ::EmbeddedProto::Error::NO_ERRORS;
+
+      if((static_cast<ProtoMessageType>(0) != type_) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
+      {
+        EmbeddedProto::uint32 value = 0;
+        value.set(static_cast<uint32_t>(type_));
+        return_value = value.serialize_with_id(static_cast<uint32_t>(id::TYPE), buffer);
+      }
+
+      if(::EmbeddedProto::Error::NO_ERRORS == return_value)
+      {
+        return_value = payload_.serialize_with_id(static_cast<uint32_t>(id::PAYLOAD), buffer);
+      }
+
+      return return_value;
+    };
+
+    ::EmbeddedProto::Error deserialize(::EmbeddedProto::ReadBufferInterface& buffer) override
+    {
+      ::EmbeddedProto::Error return_value = ::EmbeddedProto::Error::NO_ERRORS;
+      ::EmbeddedProto::WireFormatter::WireType wire_type = ::EmbeddedProto::WireFormatter::WireType::VARINT;
+      uint32_t id_number = 0;
+      id id_tag = id::NOT_SET;
+
+      ::EmbeddedProto::Error tag_value = ::EmbeddedProto::WireFormatter::DeserializeTag(buffer, wire_type, id_number);
+      while((::EmbeddedProto::Error::NO_ERRORS == return_value) && (::EmbeddedProto::Error::NO_ERRORS == tag_value))
+      {
+        id_tag = static_cast<id>(id_number);
+        switch(id_tag)
+        {
+          case id::TYPE:
+            if(::EmbeddedProto::WireFormatter::WireType::VARINT == wire_type)
+            {
+              uint32_t value = 0;
+              return_value = ::EmbeddedProto::WireFormatter::DeserializeVarint(buffer, value);
+              if(::EmbeddedProto::Error::NO_ERRORS == return_value)
+              {
+                set_type(static_cast<ProtoMessageType>(value));
+              }
+            }
+            else
+            {
+              // Wire type does not match field.
+              return_value = ::EmbeddedProto::Error::INVALID_WIRETYPE;
+            }
+            break;
+
+          case id::PAYLOAD:
+            return_value = payload_.deserialize_check_type(buffer, wire_type);
+            break;
+
+          default:
+            break;
+        }
+
+        if(::EmbeddedProto::Error::NO_ERRORS == return_value)
+        {
+          // Read the next tag.
+          tag_value = ::EmbeddedProto::WireFormatter::DeserializeTag(buffer, wire_type, id_number);
+        }
+      }
+
+      // When an error was detect while reading the tag but no other errors where found, set it in the return value.
+      if((::EmbeddedProto::Error::NO_ERRORS == return_value)
+         && (::EmbeddedProto::Error::NO_ERRORS != tag_value)
+         && (::EmbeddedProto::Error::END_OF_BUFFER != tag_value)) // The end of the buffer is not an array in this case.
+      {
+        return_value = tag_value;
+      }
+
+      return return_value;
+    };
+
+    void clear() override
+    {
+      clear_type();
+      clear_payload();
+
+    }
+
+    private:
+
+      ProtoMessageType type_ = static_cast<ProtoMessageType>(0);
+      ::EmbeddedProto::FieldBytes<payload_LENGTH> payload_;
+
+};
+
+class PumpSpeedsMessage final: public ::EmbeddedProto::MessageInterface
+{
+  public:
+    PumpSpeedsMessage() = default;
+    PumpSpeedsMessage(const PumpSpeedsMessage& rhs )
+    {
+      set_refluxPumpSpeed(rhs.get_refluxPumpSpeed());
+      set_productPumpSpeed(rhs.get_productPumpSpeed());
+    }
+
+    PumpSpeedsMessage(const PumpSpeedsMessage&& rhs ) noexcept
+    {
+      set_refluxPumpSpeed(rhs.get_refluxPumpSpeed());
+      set_productPumpSpeed(rhs.get_productPumpSpeed());
+    }
+
+    ~PumpSpeedsMessage() override = default;
+
+    enum class id : uint32_t
+    {
+      NOT_SET = 0,
+      REFLUXPUMPSPEED = 1,
+      PRODUCTPUMPSPEED = 2
+    };
+
+    PumpSpeedsMessage& operator=(const PumpSpeedsMessage& rhs)
+    {
+      set_refluxPumpSpeed(rhs.get_refluxPumpSpeed());
+      set_productPumpSpeed(rhs.get_productPumpSpeed());
+      return *this;
+    }
+
+    PumpSpeedsMessage& operator=(const PumpSpeedsMessage&& rhs) noexcept
+    {
+      set_refluxPumpSpeed(rhs.get_refluxPumpSpeed());
+      set_productPumpSpeed(rhs.get_productPumpSpeed());
+      return *this;
+    }
+
+    inline void clear_refluxPumpSpeed() { refluxPumpSpeed_.clear(); }
+    inline void set_refluxPumpSpeed(const EmbeddedProto::doublefixed& value) { refluxPumpSpeed_ = value; }
+    inline void set_refluxPumpSpeed(const EmbeddedProto::doublefixed&& value) { refluxPumpSpeed_ = value; }
+    inline EmbeddedProto::doublefixed& mutable_refluxPumpSpeed() { return refluxPumpSpeed_; }
+    inline const EmbeddedProto::doublefixed& get_refluxPumpSpeed() const { return refluxPumpSpeed_; }
+    inline EmbeddedProto::doublefixed::FIELD_TYPE refluxPumpSpeed() const { return refluxPumpSpeed_.get(); }
+
+    inline void clear_productPumpSpeed() { productPumpSpeed_.clear(); }
+    inline void set_productPumpSpeed(const EmbeddedProto::doublefixed& value) { productPumpSpeed_ = value; }
+    inline void set_productPumpSpeed(const EmbeddedProto::doublefixed&& value) { productPumpSpeed_ = value; }
+    inline EmbeddedProto::doublefixed& mutable_productPumpSpeed() { return productPumpSpeed_; }
+    inline const EmbeddedProto::doublefixed& get_productPumpSpeed() const { return productPumpSpeed_; }
+    inline EmbeddedProto::doublefixed::FIELD_TYPE productPumpSpeed() const { return productPumpSpeed_.get(); }
+
+
+    ::EmbeddedProto::Error serialize(::EmbeddedProto::WriteBufferInterface& buffer) const override
+    {
+      ::EmbeddedProto::Error return_value = ::EmbeddedProto::Error::NO_ERRORS;
+
+      if((0.0 != refluxPumpSpeed_.get()) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
+      {
+        return_value = refluxPumpSpeed_.serialize_with_id(static_cast<uint32_t>(id::REFLUXPUMPSPEED), buffer);
+      }
+
+      if((0.0 != productPumpSpeed_.get()) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
+      {
+        return_value = productPumpSpeed_.serialize_with_id(static_cast<uint32_t>(id::PRODUCTPUMPSPEED), buffer);
+      }
+
+      return return_value;
+    };
+
+    ::EmbeddedProto::Error deserialize(::EmbeddedProto::ReadBufferInterface& buffer) override
+    {
+      ::EmbeddedProto::Error return_value = ::EmbeddedProto::Error::NO_ERRORS;
+      ::EmbeddedProto::WireFormatter::WireType wire_type = ::EmbeddedProto::WireFormatter::WireType::VARINT;
+      uint32_t id_number = 0;
+      id id_tag = id::NOT_SET;
+
+      ::EmbeddedProto::Error tag_value = ::EmbeddedProto::WireFormatter::DeserializeTag(buffer, wire_type, id_number);
+      while((::EmbeddedProto::Error::NO_ERRORS == return_value) && (::EmbeddedProto::Error::NO_ERRORS == tag_value))
+      {
+        id_tag = static_cast<id>(id_number);
+        switch(id_tag)
+        {
+          case id::REFLUXPUMPSPEED:
+            return_value = refluxPumpSpeed_.deserialize_check_type(buffer, wire_type);
+            break;
+
+          case id::PRODUCTPUMPSPEED:
+            return_value = productPumpSpeed_.deserialize_check_type(buffer, wire_type);
+            break;
+
+          default:
+            break;
+        }
+
+        if(::EmbeddedProto::Error::NO_ERRORS == return_value)
+        {
+          // Read the next tag.
+          tag_value = ::EmbeddedProto::WireFormatter::DeserializeTag(buffer, wire_type, id_number);
+        }
+      }
+
+      // When an error was detect while reading the tag but no other errors where found, set it in the return value.
+      if((::EmbeddedProto::Error::NO_ERRORS == return_value)
+         && (::EmbeddedProto::Error::NO_ERRORS != tag_value)
+         && (::EmbeddedProto::Error::END_OF_BUFFER != tag_value)) // The end of the buffer is not an array in this case.
+      {
+        return_value = tag_value;
+      }
+
+      return return_value;
+    };
+
+    void clear() override
+    {
+      clear_refluxPumpSpeed();
+      clear_productPumpSpeed();
+
+    }
+
+    private:
+
+      EmbeddedProto::doublefixed refluxPumpSpeed_ = 0.0;
+      EmbeddedProto::doublefixed productPumpSpeed_ = 0.0;
+
+};
+
+class ControllerSettingsMessage final: public ::EmbeddedProto::MessageInterface
+{
+  public:
+    ControllerSettingsMessage() = default;
+    ControllerSettingsMessage(const ControllerSettingsMessage& rhs )
+    {
+      set_refluxPumpMode(rhs.get_refluxPumpMode());
+      set_productPumpMode(rhs.get_productPumpMode());
+      set_manualPumpSpeeds(rhs.get_manualPumpSpeeds());
+    }
+
+    ControllerSettingsMessage(const ControllerSettingsMessage&& rhs ) noexcept
+    {
+      set_refluxPumpMode(rhs.get_refluxPumpMode());
+      set_productPumpMode(rhs.get_productPumpMode());
+      set_manualPumpSpeeds(rhs.get_manualPumpSpeeds());
+    }
+
+    ~ControllerSettingsMessage() override = default;
+
+    enum class id : uint32_t
+    {
+      NOT_SET = 0,
+      REFLUXPUMPMODE = 1,
+      PRODUCTPUMPMODE = 2,
+      MANUALPUMPSPEEDS = 3
+    };
+
+    ControllerSettingsMessage& operator=(const ControllerSettingsMessage& rhs)
+    {
+      set_refluxPumpMode(rhs.get_refluxPumpMode());
+      set_productPumpMode(rhs.get_productPumpMode());
+      set_manualPumpSpeeds(rhs.get_manualPumpSpeeds());
+      return *this;
+    }
+
+    ControllerSettingsMessage& operator=(const ControllerSettingsMessage&& rhs) noexcept
+    {
+      set_refluxPumpMode(rhs.get_refluxPumpMode());
+      set_productPumpMode(rhs.get_productPumpMode());
+      set_manualPumpSpeeds(rhs.get_manualPumpSpeeds());
+      return *this;
+    }
+
+    inline void clear_refluxPumpMode() { refluxPumpMode_ = static_cast<PumpMode>(0); }
+    inline void set_refluxPumpMode(const PumpMode& value) { refluxPumpMode_ = value; }
+    inline void set_refluxPumpMode(const PumpMode&& value) { refluxPumpMode_ = value; }
+    inline const PumpMode& get_refluxPumpMode() const { return refluxPumpMode_; }
+    inline PumpMode refluxPumpMode() const { return refluxPumpMode_; }
+
+    inline void clear_productPumpMode() { productPumpMode_ = static_cast<PumpMode>(0); }
+    inline void set_productPumpMode(const PumpMode& value) { productPumpMode_ = value; }
+    inline void set_productPumpMode(const PumpMode&& value) { productPumpMode_ = value; }
+    inline const PumpMode& get_productPumpMode() const { return productPumpMode_; }
+    inline PumpMode productPumpMode() const { return productPumpMode_; }
+
+    inline void clear_manualPumpSpeeds() { manualPumpSpeeds_.clear(); }
+    inline void set_manualPumpSpeeds(const PumpSpeedsMessage& value) { manualPumpSpeeds_ = value; }
+    inline void set_manualPumpSpeeds(const PumpSpeedsMessage&& value) { manualPumpSpeeds_ = value; }
+    inline PumpSpeedsMessage& mutable_manualPumpSpeeds() { return manualPumpSpeeds_; }
+    inline const PumpSpeedsMessage& get_manualPumpSpeeds() const { return manualPumpSpeeds_; }
+    inline const PumpSpeedsMessage& manualPumpSpeeds() const { return manualPumpSpeeds_; }
+
+
+    ::EmbeddedProto::Error serialize(::EmbeddedProto::WriteBufferInterface& buffer) const override
+    {
+      ::EmbeddedProto::Error return_value = ::EmbeddedProto::Error::NO_ERRORS;
+
+      if((static_cast<PumpMode>(0) != refluxPumpMode_) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
+      {
+        EmbeddedProto::uint32 value = 0;
+        value.set(static_cast<uint32_t>(refluxPumpMode_));
+        return_value = value.serialize_with_id(static_cast<uint32_t>(id::REFLUXPUMPMODE), buffer);
+      }
+
+      if((static_cast<PumpMode>(0) != productPumpMode_) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
+      {
+        EmbeddedProto::uint32 value = 0;
+        value.set(static_cast<uint32_t>(productPumpMode_));
+        return_value = value.serialize_with_id(static_cast<uint32_t>(id::PRODUCTPUMPMODE), buffer);
+      }
+
+      if(::EmbeddedProto::Error::NO_ERRORS == return_value)
+      {
+        return_value = manualPumpSpeeds_.serialize_with_id(static_cast<uint32_t>(id::MANUALPUMPSPEEDS), buffer);
+      }
+
+      return return_value;
+    };
+
+    ::EmbeddedProto::Error deserialize(::EmbeddedProto::ReadBufferInterface& buffer) override
+    {
+      ::EmbeddedProto::Error return_value = ::EmbeddedProto::Error::NO_ERRORS;
+      ::EmbeddedProto::WireFormatter::WireType wire_type = ::EmbeddedProto::WireFormatter::WireType::VARINT;
+      uint32_t id_number = 0;
+      id id_tag = id::NOT_SET;
+
+      ::EmbeddedProto::Error tag_value = ::EmbeddedProto::WireFormatter::DeserializeTag(buffer, wire_type, id_number);
+      while((::EmbeddedProto::Error::NO_ERRORS == return_value) && (::EmbeddedProto::Error::NO_ERRORS == tag_value))
+      {
+        id_tag = static_cast<id>(id_number);
+        switch(id_tag)
+        {
+          case id::REFLUXPUMPMODE:
+            if(::EmbeddedProto::WireFormatter::WireType::VARINT == wire_type)
+            {
+              uint32_t value = 0;
+              return_value = ::EmbeddedProto::WireFormatter::DeserializeVarint(buffer, value);
+              if(::EmbeddedProto::Error::NO_ERRORS == return_value)
+              {
+                set_refluxPumpMode(static_cast<PumpMode>(value));
+              }
+            }
+            else
+            {
+              // Wire type does not match field.
+              return_value = ::EmbeddedProto::Error::INVALID_WIRETYPE;
+            }
+            break;
+
+          case id::PRODUCTPUMPMODE:
+            if(::EmbeddedProto::WireFormatter::WireType::VARINT == wire_type)
+            {
+              uint32_t value = 0;
+              return_value = ::EmbeddedProto::WireFormatter::DeserializeVarint(buffer, value);
+              if(::EmbeddedProto::Error::NO_ERRORS == return_value)
+              {
+                set_productPumpMode(static_cast<PumpMode>(value));
+              }
+            }
+            else
+            {
+              // Wire type does not match field.
+              return_value = ::EmbeddedProto::Error::INVALID_WIRETYPE;
+            }
+            break;
+
+          case id::MANUALPUMPSPEEDS:
+            return_value = manualPumpSpeeds_.deserialize_check_type(buffer, wire_type);
+            break;
+
+          default:
+            break;
+        }
+
+        if(::EmbeddedProto::Error::NO_ERRORS == return_value)
+        {
+          // Read the next tag.
+          tag_value = ::EmbeddedProto::WireFormatter::DeserializeTag(buffer, wire_type, id_number);
+        }
+      }
+
+      // When an error was detect while reading the tag but no other errors where found, set it in the return value.
+      if((::EmbeddedProto::Error::NO_ERRORS == return_value)
+         && (::EmbeddedProto::Error::NO_ERRORS != tag_value)
+         && (::EmbeddedProto::Error::END_OF_BUFFER != tag_value)) // The end of the buffer is not an array in this case.
+      {
+        return_value = tag_value;
+      }
+
+      return return_value;
+    };
+
+    void clear() override
+    {
+      clear_refluxPumpMode();
+      clear_productPumpMode();
+      clear_manualPumpSpeeds();
+
+    }
+
+    private:
+
+      PumpMode refluxPumpMode_ = static_cast<PumpMode>(0);
+      PumpMode productPumpMode_ = static_cast<PumpMode>(0);
+      PumpSpeedsMessage manualPumpSpeeds_;
+
+};
+
 class ControllerStateMessage final: public ::EmbeddedProto::MessageInterface
 {
   public:
@@ -216,6 +693,615 @@ class ControllerStateMessage final: public ::EmbeddedProto::MessageInterface
       EmbeddedProto::doublefixed integralOutput_ = 0.0;
       EmbeddedProto::doublefixed derivOutput_ = 0.0;
       EmbeddedProto::doublefixed totalOutput_ = 0.0;
+
+};
+
+class IIRLowpassFilterConfigMessage final: public ::EmbeddedProto::MessageInterface
+{
+  public:
+    IIRLowpassFilterConfigMessage() = default;
+    IIRLowpassFilterConfigMessage(const IIRLowpassFilterConfigMessage& rhs )
+    {
+      set_sampleFreq(rhs.get_sampleFreq());
+      set_cutoffFreq(rhs.get_cutoffFreq());
+    }
+
+    IIRLowpassFilterConfigMessage(const IIRLowpassFilterConfigMessage&& rhs ) noexcept
+    {
+      set_sampleFreq(rhs.get_sampleFreq());
+      set_cutoffFreq(rhs.get_cutoffFreq());
+    }
+
+    ~IIRLowpassFilterConfigMessage() override = default;
+
+    enum class id : uint32_t
+    {
+      NOT_SET = 0,
+      SAMPLEFREQ = 1,
+      CUTOFFFREQ = 2
+    };
+
+    IIRLowpassFilterConfigMessage& operator=(const IIRLowpassFilterConfigMessage& rhs)
+    {
+      set_sampleFreq(rhs.get_sampleFreq());
+      set_cutoffFreq(rhs.get_cutoffFreq());
+      return *this;
+    }
+
+    IIRLowpassFilterConfigMessage& operator=(const IIRLowpassFilterConfigMessage&& rhs) noexcept
+    {
+      set_sampleFreq(rhs.get_sampleFreq());
+      set_cutoffFreq(rhs.get_cutoffFreq());
+      return *this;
+    }
+
+    inline void clear_sampleFreq() { sampleFreq_.clear(); }
+    inline void set_sampleFreq(const EmbeddedProto::doublefixed& value) { sampleFreq_ = value; }
+    inline void set_sampleFreq(const EmbeddedProto::doublefixed&& value) { sampleFreq_ = value; }
+    inline EmbeddedProto::doublefixed& mutable_sampleFreq() { return sampleFreq_; }
+    inline const EmbeddedProto::doublefixed& get_sampleFreq() const { return sampleFreq_; }
+    inline EmbeddedProto::doublefixed::FIELD_TYPE sampleFreq() const { return sampleFreq_.get(); }
+
+    inline void clear_cutoffFreq() { cutoffFreq_.clear(); }
+    inline void set_cutoffFreq(const EmbeddedProto::doublefixed& value) { cutoffFreq_ = value; }
+    inline void set_cutoffFreq(const EmbeddedProto::doublefixed&& value) { cutoffFreq_ = value; }
+    inline EmbeddedProto::doublefixed& mutable_cutoffFreq() { return cutoffFreq_; }
+    inline const EmbeddedProto::doublefixed& get_cutoffFreq() const { return cutoffFreq_; }
+    inline EmbeddedProto::doublefixed::FIELD_TYPE cutoffFreq() const { return cutoffFreq_.get(); }
+
+
+    ::EmbeddedProto::Error serialize(::EmbeddedProto::WriteBufferInterface& buffer) const override
+    {
+      ::EmbeddedProto::Error return_value = ::EmbeddedProto::Error::NO_ERRORS;
+
+      if((0.0 != sampleFreq_.get()) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
+      {
+        return_value = sampleFreq_.serialize_with_id(static_cast<uint32_t>(id::SAMPLEFREQ), buffer);
+      }
+
+      if((0.0 != cutoffFreq_.get()) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
+      {
+        return_value = cutoffFreq_.serialize_with_id(static_cast<uint32_t>(id::CUTOFFFREQ), buffer);
+      }
+
+      return return_value;
+    };
+
+    ::EmbeddedProto::Error deserialize(::EmbeddedProto::ReadBufferInterface& buffer) override
+    {
+      ::EmbeddedProto::Error return_value = ::EmbeddedProto::Error::NO_ERRORS;
+      ::EmbeddedProto::WireFormatter::WireType wire_type = ::EmbeddedProto::WireFormatter::WireType::VARINT;
+      uint32_t id_number = 0;
+      id id_tag = id::NOT_SET;
+
+      ::EmbeddedProto::Error tag_value = ::EmbeddedProto::WireFormatter::DeserializeTag(buffer, wire_type, id_number);
+      while((::EmbeddedProto::Error::NO_ERRORS == return_value) && (::EmbeddedProto::Error::NO_ERRORS == tag_value))
+      {
+        id_tag = static_cast<id>(id_number);
+        switch(id_tag)
+        {
+          case id::SAMPLEFREQ:
+            return_value = sampleFreq_.deserialize_check_type(buffer, wire_type);
+            break;
+
+          case id::CUTOFFFREQ:
+            return_value = cutoffFreq_.deserialize_check_type(buffer, wire_type);
+            break;
+
+          default:
+            break;
+        }
+
+        if(::EmbeddedProto::Error::NO_ERRORS == return_value)
+        {
+          // Read the next tag.
+          tag_value = ::EmbeddedProto::WireFormatter::DeserializeTag(buffer, wire_type, id_number);
+        }
+      }
+
+      // When an error was detect while reading the tag but no other errors where found, set it in the return value.
+      if((::EmbeddedProto::Error::NO_ERRORS == return_value)
+         && (::EmbeddedProto::Error::NO_ERRORS != tag_value)
+         && (::EmbeddedProto::Error::END_OF_BUFFER != tag_value)) // The end of the buffer is not an array in this case.
+      {
+        return_value = tag_value;
+      }
+
+      return return_value;
+    };
+
+    void clear() override
+    {
+      clear_sampleFreq();
+      clear_cutoffFreq();
+
+    }
+
+    private:
+
+      EmbeddedProto::doublefixed sampleFreq_ = 0.0;
+      EmbeddedProto::doublefixed cutoffFreq_ = 0.0;
+
+};
+
+class ControllerTuningMessage final: public ::EmbeddedProto::MessageInterface
+{
+  public:
+    ControllerTuningMessage() = default;
+    ControllerTuningMessage(const ControllerTuningMessage& rhs )
+    {
+      set_setpoint(rhs.get_setpoint());
+      set_PGain(rhs.get_PGain());
+      set_IGain(rhs.get_IGain());
+      set_DGain(rhs.get_DGain());
+      set_derivFilterSettings(rhs.get_derivFilterSettings());
+    }
+
+    ControllerTuningMessage(const ControllerTuningMessage&& rhs ) noexcept
+    {
+      set_setpoint(rhs.get_setpoint());
+      set_PGain(rhs.get_PGain());
+      set_IGain(rhs.get_IGain());
+      set_DGain(rhs.get_DGain());
+      set_derivFilterSettings(rhs.get_derivFilterSettings());
+    }
+
+    ~ControllerTuningMessage() override = default;
+
+    enum class id : uint32_t
+    {
+      NOT_SET = 0,
+      SETPOINT = 1,
+      PGAIN = 2,
+      IGAIN = 3,
+      DGAIN = 4,
+      DERIVFILTERSETTINGS = 5
+    };
+
+    ControllerTuningMessage& operator=(const ControllerTuningMessage& rhs)
+    {
+      set_setpoint(rhs.get_setpoint());
+      set_PGain(rhs.get_PGain());
+      set_IGain(rhs.get_IGain());
+      set_DGain(rhs.get_DGain());
+      set_derivFilterSettings(rhs.get_derivFilterSettings());
+      return *this;
+    }
+
+    ControllerTuningMessage& operator=(const ControllerTuningMessage&& rhs) noexcept
+    {
+      set_setpoint(rhs.get_setpoint());
+      set_PGain(rhs.get_PGain());
+      set_IGain(rhs.get_IGain());
+      set_DGain(rhs.get_DGain());
+      set_derivFilterSettings(rhs.get_derivFilterSettings());
+      return *this;
+    }
+
+    inline void clear_setpoint() { setpoint_.clear(); }
+    inline void set_setpoint(const EmbeddedProto::doublefixed& value) { setpoint_ = value; }
+    inline void set_setpoint(const EmbeddedProto::doublefixed&& value) { setpoint_ = value; }
+    inline EmbeddedProto::doublefixed& mutable_setpoint() { return setpoint_; }
+    inline const EmbeddedProto::doublefixed& get_setpoint() const { return setpoint_; }
+    inline EmbeddedProto::doublefixed::FIELD_TYPE setpoint() const { return setpoint_.get(); }
+
+    inline void clear_PGain() { PGain_.clear(); }
+    inline void set_PGain(const EmbeddedProto::doublefixed& value) { PGain_ = value; }
+    inline void set_PGain(const EmbeddedProto::doublefixed&& value) { PGain_ = value; }
+    inline EmbeddedProto::doublefixed& mutable_PGain() { return PGain_; }
+    inline const EmbeddedProto::doublefixed& get_PGain() const { return PGain_; }
+    inline EmbeddedProto::doublefixed::FIELD_TYPE PGain() const { return PGain_.get(); }
+
+    inline void clear_IGain() { IGain_.clear(); }
+    inline void set_IGain(const EmbeddedProto::doublefixed& value) { IGain_ = value; }
+    inline void set_IGain(const EmbeddedProto::doublefixed&& value) { IGain_ = value; }
+    inline EmbeddedProto::doublefixed& mutable_IGain() { return IGain_; }
+    inline const EmbeddedProto::doublefixed& get_IGain() const { return IGain_; }
+    inline EmbeddedProto::doublefixed::FIELD_TYPE IGain() const { return IGain_.get(); }
+
+    inline void clear_DGain() { DGain_.clear(); }
+    inline void set_DGain(const EmbeddedProto::doublefixed& value) { DGain_ = value; }
+    inline void set_DGain(const EmbeddedProto::doublefixed&& value) { DGain_ = value; }
+    inline EmbeddedProto::doublefixed& mutable_DGain() { return DGain_; }
+    inline const EmbeddedProto::doublefixed& get_DGain() const { return DGain_; }
+    inline EmbeddedProto::doublefixed::FIELD_TYPE DGain() const { return DGain_.get(); }
+
+    inline void clear_derivFilterSettings() { derivFilterSettings_.clear(); }
+    inline void set_derivFilterSettings(const IIRLowpassFilterConfigMessage& value) { derivFilterSettings_ = value; }
+    inline void set_derivFilterSettings(const IIRLowpassFilterConfigMessage&& value) { derivFilterSettings_ = value; }
+    inline IIRLowpassFilterConfigMessage& mutable_derivFilterSettings() { return derivFilterSettings_; }
+    inline const IIRLowpassFilterConfigMessage& get_derivFilterSettings() const { return derivFilterSettings_; }
+    inline const IIRLowpassFilterConfigMessage& derivFilterSettings() const { return derivFilterSettings_; }
+
+
+    ::EmbeddedProto::Error serialize(::EmbeddedProto::WriteBufferInterface& buffer) const override
+    {
+      ::EmbeddedProto::Error return_value = ::EmbeddedProto::Error::NO_ERRORS;
+
+      if((0.0 != setpoint_.get()) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
+      {
+        return_value = setpoint_.serialize_with_id(static_cast<uint32_t>(id::SETPOINT), buffer);
+      }
+
+      if((0.0 != PGain_.get()) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
+      {
+        return_value = PGain_.serialize_with_id(static_cast<uint32_t>(id::PGAIN), buffer);
+      }
+
+      if((0.0 != IGain_.get()) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
+      {
+        return_value = IGain_.serialize_with_id(static_cast<uint32_t>(id::IGAIN), buffer);
+      }
+
+      if((0.0 != DGain_.get()) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
+      {
+        return_value = DGain_.serialize_with_id(static_cast<uint32_t>(id::DGAIN), buffer);
+      }
+
+      if(::EmbeddedProto::Error::NO_ERRORS == return_value)
+      {
+        return_value = derivFilterSettings_.serialize_with_id(static_cast<uint32_t>(id::DERIVFILTERSETTINGS), buffer);
+      }
+
+      return return_value;
+    };
+
+    ::EmbeddedProto::Error deserialize(::EmbeddedProto::ReadBufferInterface& buffer) override
+    {
+      ::EmbeddedProto::Error return_value = ::EmbeddedProto::Error::NO_ERRORS;
+      ::EmbeddedProto::WireFormatter::WireType wire_type = ::EmbeddedProto::WireFormatter::WireType::VARINT;
+      uint32_t id_number = 0;
+      id id_tag = id::NOT_SET;
+
+      ::EmbeddedProto::Error tag_value = ::EmbeddedProto::WireFormatter::DeserializeTag(buffer, wire_type, id_number);
+      while((::EmbeddedProto::Error::NO_ERRORS == return_value) && (::EmbeddedProto::Error::NO_ERRORS == tag_value))
+      {
+        id_tag = static_cast<id>(id_number);
+        switch(id_tag)
+        {
+          case id::SETPOINT:
+            return_value = setpoint_.deserialize_check_type(buffer, wire_type);
+            break;
+
+          case id::PGAIN:
+            return_value = PGain_.deserialize_check_type(buffer, wire_type);
+            break;
+
+          case id::IGAIN:
+            return_value = IGain_.deserialize_check_type(buffer, wire_type);
+            break;
+
+          case id::DGAIN:
+            return_value = DGain_.deserialize_check_type(buffer, wire_type);
+            break;
+
+          case id::DERIVFILTERSETTINGS:
+            return_value = derivFilterSettings_.deserialize_check_type(buffer, wire_type);
+            break;
+
+          default:
+            break;
+        }
+
+        if(::EmbeddedProto::Error::NO_ERRORS == return_value)
+        {
+          // Read the next tag.
+          tag_value = ::EmbeddedProto::WireFormatter::DeserializeTag(buffer, wire_type, id_number);
+        }
+      }
+
+      // When an error was detect while reading the tag but no other errors where found, set it in the return value.
+      if((::EmbeddedProto::Error::NO_ERRORS == return_value)
+         && (::EmbeddedProto::Error::NO_ERRORS != tag_value)
+         && (::EmbeddedProto::Error::END_OF_BUFFER != tag_value)) // The end of the buffer is not an array in this case.
+      {
+        return_value = tag_value;
+      }
+
+      return return_value;
+    };
+
+    void clear() override
+    {
+      clear_setpoint();
+      clear_PGain();
+      clear_IGain();
+      clear_DGain();
+      clear_derivFilterSettings();
+
+    }
+
+    private:
+
+      EmbeddedProto::doublefixed setpoint_ = 0.0;
+      EmbeddedProto::doublefixed PGain_ = 0.0;
+      EmbeddedProto::doublefixed IGain_ = 0.0;
+      EmbeddedProto::doublefixed DGain_ = 0.0;
+      IIRLowpassFilterConfigMessage derivFilterSettings_;
+
+};
+
+class ControllerCommandMessage final: public ::EmbeddedProto::MessageInterface
+{
+  public:
+    ControllerCommandMessage() = default;
+    ControllerCommandMessage(const ControllerCommandMessage& rhs )
+    {
+      set_fanState(rhs.get_fanState());
+      set_LPElementDutyCycle(rhs.get_LPElementDutyCycle());
+      set_HPElementDutyCycle(rhs.get_HPElementDutyCycle());
+    }
+
+    ControllerCommandMessage(const ControllerCommandMessage&& rhs ) noexcept
+    {
+      set_fanState(rhs.get_fanState());
+      set_LPElementDutyCycle(rhs.get_LPElementDutyCycle());
+      set_HPElementDutyCycle(rhs.get_HPElementDutyCycle());
+    }
+
+    ~ControllerCommandMessage() override = default;
+
+    enum class id : uint32_t
+    {
+      NOT_SET = 0,
+      FANSTATE = 1,
+      LPELEMENTDUTYCYCLE = 2,
+      HPELEMENTDUTYCYCLE = 3
+    };
+
+    ControllerCommandMessage& operator=(const ControllerCommandMessage& rhs)
+    {
+      set_fanState(rhs.get_fanState());
+      set_LPElementDutyCycle(rhs.get_LPElementDutyCycle());
+      set_HPElementDutyCycle(rhs.get_HPElementDutyCycle());
+      return *this;
+    }
+
+    ControllerCommandMessage& operator=(const ControllerCommandMessage&& rhs) noexcept
+    {
+      set_fanState(rhs.get_fanState());
+      set_LPElementDutyCycle(rhs.get_LPElementDutyCycle());
+      set_HPElementDutyCycle(rhs.get_HPElementDutyCycle());
+      return *this;
+    }
+
+    inline void clear_fanState() { fanState_ = static_cast<ComponentState>(0); }
+    inline void set_fanState(const ComponentState& value) { fanState_ = value; }
+    inline void set_fanState(const ComponentState&& value) { fanState_ = value; }
+    inline const ComponentState& get_fanState() const { return fanState_; }
+    inline ComponentState fanState() const { return fanState_; }
+
+    inline void clear_LPElementDutyCycle() { LPElementDutyCycle_.clear(); }
+    inline void set_LPElementDutyCycle(const EmbeddedProto::doublefixed& value) { LPElementDutyCycle_ = value; }
+    inline void set_LPElementDutyCycle(const EmbeddedProto::doublefixed&& value) { LPElementDutyCycle_ = value; }
+    inline EmbeddedProto::doublefixed& mutable_LPElementDutyCycle() { return LPElementDutyCycle_; }
+    inline const EmbeddedProto::doublefixed& get_LPElementDutyCycle() const { return LPElementDutyCycle_; }
+    inline EmbeddedProto::doublefixed::FIELD_TYPE LPElementDutyCycle() const { return LPElementDutyCycle_.get(); }
+
+    inline void clear_HPElementDutyCycle() { HPElementDutyCycle_.clear(); }
+    inline void set_HPElementDutyCycle(const EmbeddedProto::doublefixed& value) { HPElementDutyCycle_ = value; }
+    inline void set_HPElementDutyCycle(const EmbeddedProto::doublefixed&& value) { HPElementDutyCycle_ = value; }
+    inline EmbeddedProto::doublefixed& mutable_HPElementDutyCycle() { return HPElementDutyCycle_; }
+    inline const EmbeddedProto::doublefixed& get_HPElementDutyCycle() const { return HPElementDutyCycle_; }
+    inline EmbeddedProto::doublefixed::FIELD_TYPE HPElementDutyCycle() const { return HPElementDutyCycle_.get(); }
+
+
+    ::EmbeddedProto::Error serialize(::EmbeddedProto::WriteBufferInterface& buffer) const override
+    {
+      ::EmbeddedProto::Error return_value = ::EmbeddedProto::Error::NO_ERRORS;
+
+      if((static_cast<ComponentState>(0) != fanState_) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
+      {
+        EmbeddedProto::uint32 value = 0;
+        value.set(static_cast<uint32_t>(fanState_));
+        return_value = value.serialize_with_id(static_cast<uint32_t>(id::FANSTATE), buffer);
+      }
+
+      if((0.0 != LPElementDutyCycle_.get()) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
+      {
+        return_value = LPElementDutyCycle_.serialize_with_id(static_cast<uint32_t>(id::LPELEMENTDUTYCYCLE), buffer);
+      }
+
+      if((0.0 != HPElementDutyCycle_.get()) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
+      {
+        return_value = HPElementDutyCycle_.serialize_with_id(static_cast<uint32_t>(id::HPELEMENTDUTYCYCLE), buffer);
+      }
+
+      return return_value;
+    };
+
+    ::EmbeddedProto::Error deserialize(::EmbeddedProto::ReadBufferInterface& buffer) override
+    {
+      ::EmbeddedProto::Error return_value = ::EmbeddedProto::Error::NO_ERRORS;
+      ::EmbeddedProto::WireFormatter::WireType wire_type = ::EmbeddedProto::WireFormatter::WireType::VARINT;
+      uint32_t id_number = 0;
+      id id_tag = id::NOT_SET;
+
+      ::EmbeddedProto::Error tag_value = ::EmbeddedProto::WireFormatter::DeserializeTag(buffer, wire_type, id_number);
+      while((::EmbeddedProto::Error::NO_ERRORS == return_value) && (::EmbeddedProto::Error::NO_ERRORS == tag_value))
+      {
+        id_tag = static_cast<id>(id_number);
+        switch(id_tag)
+        {
+          case id::FANSTATE:
+            if(::EmbeddedProto::WireFormatter::WireType::VARINT == wire_type)
+            {
+              uint32_t value = 0;
+              return_value = ::EmbeddedProto::WireFormatter::DeserializeVarint(buffer, value);
+              if(::EmbeddedProto::Error::NO_ERRORS == return_value)
+              {
+                set_fanState(static_cast<ComponentState>(value));
+              }
+            }
+            else
+            {
+              // Wire type does not match field.
+              return_value = ::EmbeddedProto::Error::INVALID_WIRETYPE;
+            }
+            break;
+
+          case id::LPELEMENTDUTYCYCLE:
+            return_value = LPElementDutyCycle_.deserialize_check_type(buffer, wire_type);
+            break;
+
+          case id::HPELEMENTDUTYCYCLE:
+            return_value = HPElementDutyCycle_.deserialize_check_type(buffer, wire_type);
+            break;
+
+          default:
+            break;
+        }
+
+        if(::EmbeddedProto::Error::NO_ERRORS == return_value)
+        {
+          // Read the next tag.
+          tag_value = ::EmbeddedProto::WireFormatter::DeserializeTag(buffer, wire_type, id_number);
+        }
+      }
+
+      // When an error was detect while reading the tag but no other errors where found, set it in the return value.
+      if((::EmbeddedProto::Error::NO_ERRORS == return_value)
+         && (::EmbeddedProto::Error::NO_ERRORS != tag_value)
+         && (::EmbeddedProto::Error::END_OF_BUFFER != tag_value)) // The end of the buffer is not an array in this case.
+      {
+        return_value = tag_value;
+      }
+
+      return return_value;
+    };
+
+    void clear() override
+    {
+      clear_fanState();
+      clear_LPElementDutyCycle();
+      clear_HPElementDutyCycle();
+
+    }
+
+    private:
+
+      ComponentState fanState_ = static_cast<ComponentState>(0);
+      EmbeddedProto::doublefixed LPElementDutyCycle_ = 0.0;
+      EmbeddedProto::doublefixed HPElementDutyCycle_ = 0.0;
+
+};
+
+class ControllerDataRequestMessage final: public ::EmbeddedProto::MessageInterface
+{
+  public:
+    ControllerDataRequestMessage() = default;
+    ControllerDataRequestMessage(const ControllerDataRequestMessage& rhs )
+    {
+      set_requestType(rhs.get_requestType());
+    }
+
+    ControllerDataRequestMessage(const ControllerDataRequestMessage&& rhs ) noexcept
+    {
+      set_requestType(rhs.get_requestType());
+    }
+
+    ~ControllerDataRequestMessage() override = default;
+
+    enum class id : uint32_t
+    {
+      NOT_SET = 0,
+      REQUESTTYPE = 1
+    };
+
+    ControllerDataRequestMessage& operator=(const ControllerDataRequestMessage& rhs)
+    {
+      set_requestType(rhs.get_requestType());
+      return *this;
+    }
+
+    ControllerDataRequestMessage& operator=(const ControllerDataRequestMessage&& rhs) noexcept
+    {
+      set_requestType(rhs.get_requestType());
+      return *this;
+    }
+
+    inline void clear_requestType() { requestType_ = static_cast<ControllerDataRequestType>(0); }
+    inline void set_requestType(const ControllerDataRequestType& value) { requestType_ = value; }
+    inline void set_requestType(const ControllerDataRequestType&& value) { requestType_ = value; }
+    inline const ControllerDataRequestType& get_requestType() const { return requestType_; }
+    inline ControllerDataRequestType requestType() const { return requestType_; }
+
+
+    ::EmbeddedProto::Error serialize(::EmbeddedProto::WriteBufferInterface& buffer) const override
+    {
+      ::EmbeddedProto::Error return_value = ::EmbeddedProto::Error::NO_ERRORS;
+
+      if((static_cast<ControllerDataRequestType>(0) != requestType_) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
+      {
+        EmbeddedProto::uint32 value = 0;
+        value.set(static_cast<uint32_t>(requestType_));
+        return_value = value.serialize_with_id(static_cast<uint32_t>(id::REQUESTTYPE), buffer);
+      }
+
+      return return_value;
+    };
+
+    ::EmbeddedProto::Error deserialize(::EmbeddedProto::ReadBufferInterface& buffer) override
+    {
+      ::EmbeddedProto::Error return_value = ::EmbeddedProto::Error::NO_ERRORS;
+      ::EmbeddedProto::WireFormatter::WireType wire_type = ::EmbeddedProto::WireFormatter::WireType::VARINT;
+      uint32_t id_number = 0;
+      id id_tag = id::NOT_SET;
+
+      ::EmbeddedProto::Error tag_value = ::EmbeddedProto::WireFormatter::DeserializeTag(buffer, wire_type, id_number);
+      while((::EmbeddedProto::Error::NO_ERRORS == return_value) && (::EmbeddedProto::Error::NO_ERRORS == tag_value))
+      {
+        id_tag = static_cast<id>(id_number);
+        switch(id_tag)
+        {
+          case id::REQUESTTYPE:
+            if(::EmbeddedProto::WireFormatter::WireType::VARINT == wire_type)
+            {
+              uint32_t value = 0;
+              return_value = ::EmbeddedProto::WireFormatter::DeserializeVarint(buffer, value);
+              if(::EmbeddedProto::Error::NO_ERRORS == return_value)
+              {
+                set_requestType(static_cast<ControllerDataRequestType>(value));
+              }
+            }
+            else
+            {
+              // Wire type does not match field.
+              return_value = ::EmbeddedProto::Error::INVALID_WIRETYPE;
+            }
+            break;
+
+          default:
+            break;
+        }
+
+        if(::EmbeddedProto::Error::NO_ERRORS == return_value)
+        {
+          // Read the next tag.
+          tag_value = ::EmbeddedProto::WireFormatter::DeserializeTag(buffer, wire_type, id_number);
+        }
+      }
+
+      // When an error was detect while reading the tag but no other errors where found, set it in the return value.
+      if((::EmbeddedProto::Error::NO_ERRORS == return_value)
+         && (::EmbeddedProto::Error::NO_ERRORS != tag_value)
+         && (::EmbeddedProto::Error::END_OF_BUFFER != tag_value)) // The end of the buffer is not an array in this case.
+      {
+        return_value = tag_value;
+      }
+
+      return return_value;
+    };
+
+    void clear() override
+    {
+      clear_requestType();
+
+    }
+
+    private:
+
+      ControllerDataRequestType requestType_ = static_cast<ControllerDataRequestType>(0);
 
 };
 

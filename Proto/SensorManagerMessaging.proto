@@ -1,0 +1,25 @@
+syntax = "proto3";
+import 'Proto/DS18B20Messaging.proto';
+
+enum SensorManagerCmdType {
+    CMD_NONE = 0;
+    CMD_BROADCAST_SENSORS = 2;
+}
+
+message SensorManagerCommandMessage {
+    SensorManagerCmdType cmdType = 1;
+}
+
+message FlowrateData {
+    double refluxFlowrate = 1;
+    double productFlowrate = 2;
+}
+
+message ConcentrationDataMessage {
+    double vapourConcentration = 1;
+    double boilerConcentration = 2;
+}
+
+message AssignSensorCommand {
+    DS18B20SensorMessage sensor = 1;
+}

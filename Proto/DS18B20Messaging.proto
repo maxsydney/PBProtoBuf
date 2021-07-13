@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+enum DS18B20Role {
+    NONE = 0;
+    HEAD_TEMP = 1;
+    REFLUX_TEMP = 2;
+    PRODUCT_TEMP = 3;
+    RADIATOR_TEMP = 4;
+    BOILER_TEMP = 5;
+}
+
+message DS18B20SensorMessage {
+    DS18B20Role role = 1;
+    bytes romCode = 2;
+    double calibLinear = 3;
+    double calibOffset = 4;
+}

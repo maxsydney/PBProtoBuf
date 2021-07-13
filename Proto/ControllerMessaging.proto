@@ -1,8 +1,72 @@
-syntax = "proto2";
+syntax = "proto3";
+
+enum ProtoMessageType {
+  UNKNOWN = 0;
+  CONTROLLER_STATE = 1;
+  OTHER_MESSAGE = 2;
+}
+
+enum ControllerDataRequestType {
+    NONE = 0;
+    TUNING = 1;
+    SETTINGS = 2;
+    PERIPHERAL_STATE = 3;
+}
+
+enum ComponentState {
+    OFF_STATE = 0;
+    ON_STATE = 1;
+}
+
+enum PumpMode {
+  PUMP_OFF = 0;
+  ACTIVE_CONTROL = 1;
+  MANUAL_CONTROL = 2;
+};
+
+message MessageWrapper {
+  ProtoMessageType type = 1;
+  uint64 timeStamp = 2;
+  bytes payload = 3;
+}
+
+message PumpSpeedsMessage {
+  double refluxPumpSpeed = 1;
+  double productPumpSpeed = 2;
+}
+
+message ControllerSettingsMessage {
+  PumpMode refluxPumpMode = 1;
+  PumpMode productPumpMode = 2;
+  PumpSpeedsMessage manualPumpSpeeds = 3;
+}
 
 message ControllerStateMessage {
-  required double propOutput = 1;
-  required double integralOutput = 2;
-  required double derivOutput = 3;
-  required double totalOutput = 4;
+    double propOutput = 1;
+    double integralOutput = 2;
+    double derivOutput = 3;
+    double totalOutput = 4;
+}
+
+message IIRLowpassFilterConfigMessage {
+  double sampleFreq = 1;
+  double cutoffFreq = 2;
+}
+
+message ControllerTuningMessage {
+  double setpoint = 1;
+  double PGain = 2;
+  double IGain = 3;
+  double DGain = 4;
+  IIRLowpassFilterConfigMessage derivFilterSettings= 5;
+}
+
+message ControllerCommandMessage {
+  ComponentState fanState = 1;
+  double LPElementDutyCycle = 2;
+  double HPElementDutyCycle = 3;
+}
+
+message ControllerDataRequestMessage {
+  ControllerDataRequestType requestType = 1;
 }
