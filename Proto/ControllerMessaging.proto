@@ -1,11 +1,5 @@
 syntax = "proto3";
 
-enum ProtoMessageType {
-  UNKNOWN = 0;
-  CONTROLLER_STATE = 1;
-  OTHER_MESSAGE = 2;
-}
-
 enum ControllerDataRequestType {
     NONE = 0;
     TUNING = 1;
@@ -23,12 +17,6 @@ enum PumpMode {
   ACTIVE_CONTROL = 1;
   MANUAL_CONTROL = 2;
 };
-
-message MessageWrapper {
-  ProtoMessageType type = 1;
-  uint64 timeStamp = 2;
-  bytes payload = 3;
-}
 
 message PumpSpeedsMessage {
   double refluxPumpSpeed = 1;

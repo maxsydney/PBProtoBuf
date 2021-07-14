@@ -1,3 +1,6 @@
+#ifndef PBPROTOBUF_IO_WRITABLE
+#define PBPROTOBUF_IO_WRITABLE
+
 #include "WriteBufferInterface.h"
 #include <cstddef>
 #include <cstring>
@@ -36,9 +39,14 @@ class Writable : public EmbeddedProto::WriteBufferInterface
         */
         bool push(const uint8_t* bytes, const uint32_t length);
 
+        // Get the buffer
+        const uint8_t* get_buffer(void) const { return _buffer; }
+
     private:
 
         static constexpr size_t MAX_SIZE = 1024; 
         uint8_t _buffer[MAX_SIZE] {};
         uint32_t _writeIndex = 0;
 };
+
+#endif // PBPROTOBUF_IO_WRITABLE
