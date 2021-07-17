@@ -15,11 +15,23 @@ message FlowrateData {
     double productFlowrate = 2;
 }
 
-message ConcentrationDataMessage {
+message ConcentrationData {
     double vapourConcentration = 1;
     double boilerConcentration = 2;
 }
 
 message AssignSensorCommand {
-    DS18B20SensorMessage sensor = 1;
+    DS18B20Sensor sensor = 1;
+}
+
+message TemperatureData {
+    double headTemp = 1;
+    double refluxCondensorTemp = 2;
+    double prodCondensorTemp = 3;
+    double radiatorTemp = 4;
+    double boilerTemp = 5;
+}
+
+message DeviceData {
+    repeated DS18B20Sensor sensors = 1;
 }

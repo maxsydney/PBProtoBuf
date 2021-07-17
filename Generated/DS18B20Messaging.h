@@ -56,11 +56,11 @@ enum class DS18B20Role : uint32_t
 };
 
 template<uint32_t romCode_LENGTH>
-class DS18B20SensorMessage final: public ::EmbeddedProto::MessageInterface
+class DS18B20Sensor final: public ::EmbeddedProto::MessageInterface
 {
   public:
-    DS18B20SensorMessage() = default;
-    DS18B20SensorMessage(const DS18B20SensorMessage& rhs )
+    DS18B20Sensor() = default;
+    DS18B20Sensor(const DS18B20Sensor& rhs )
     {
       set_role(rhs.get_role());
       set_romCode(rhs.get_romCode());
@@ -68,7 +68,7 @@ class DS18B20SensorMessage final: public ::EmbeddedProto::MessageInterface
       set_calibOffset(rhs.get_calibOffset());
     }
 
-    DS18B20SensorMessage(const DS18B20SensorMessage&& rhs ) noexcept
+    DS18B20Sensor(const DS18B20Sensor&& rhs ) noexcept
     {
       set_role(rhs.get_role());
       set_romCode(rhs.get_romCode());
@@ -76,7 +76,7 @@ class DS18B20SensorMessage final: public ::EmbeddedProto::MessageInterface
       set_calibOffset(rhs.get_calibOffset());
     }
 
-    ~DS18B20SensorMessage() override = default;
+    ~DS18B20Sensor() override = default;
 
     enum class id : uint32_t
     {
@@ -87,7 +87,7 @@ class DS18B20SensorMessage final: public ::EmbeddedProto::MessageInterface
       CALIBOFFSET = 4
     };
 
-    DS18B20SensorMessage& operator=(const DS18B20SensorMessage& rhs)
+    DS18B20Sensor& operator=(const DS18B20Sensor& rhs)
     {
       set_role(rhs.get_role());
       set_romCode(rhs.get_romCode());
@@ -96,7 +96,7 @@ class DS18B20SensorMessage final: public ::EmbeddedProto::MessageInterface
       return *this;
     }
 
-    DS18B20SensorMessage& operator=(const DS18B20SensorMessage&& rhs) noexcept
+    DS18B20Sensor& operator=(const DS18B20Sensor&& rhs) noexcept
     {
       set_role(rhs.get_role());
       set_romCode(rhs.get_romCode());

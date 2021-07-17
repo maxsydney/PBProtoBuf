@@ -9,7 +9,7 @@ enum DS18B20Role {
     BOILER_TEMP = 5;
 }
 
-message DS18B20SensorMessage {
+message DS18B20Sensor {
     DS18B20Role role = 1;
     bytes romCode = 2;
     double calibLinear = 3;

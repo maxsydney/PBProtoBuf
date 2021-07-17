@@ -18,43 +18,43 @@ enum PumpMode {
   MANUAL_CONTROL = 2;
 };
 
-message PumpSpeedsMessage {
+message PumpSpeeds {
   double refluxPumpSpeed = 1;
   double productPumpSpeed = 2;
 }
 
-message ControllerSettingsMessage {
+message ControllerSettings {
   PumpMode refluxPumpMode = 1;
   PumpMode productPumpMode = 2;
-  PumpSpeedsMessage manualPumpSpeeds = 3;
+  PumpSpeeds manualPumpSpeeds = 3;
 }
 
-message ControllerStateMessage {
+message ControllerState {
     double propOutput = 1;
     double integralOutput = 2;
     double derivOutput = 3;
     double totalOutput = 4;
 }
 
-message IIRLowpassFilterConfigMessage {
+message IIRLowpassFilterConfig {
   double sampleFreq = 1;
   double cutoffFreq = 2;
 }
 
-message ControllerTuningMessage {
+message ControllerTuning {
   double setpoint = 1;
   double PGain = 2;
   double IGain = 3;
   double DGain = 4;
-  IIRLowpassFilterConfigMessage derivFilterSettings= 5;
+  IIRLowpassFilterConfig derivFilterSettings= 5;
 }
 
-message ControllerCommandMessage {
+message ControllerCommand {
   ComponentState fanState = 1;
   double LPElementDutyCycle = 2;
   double HPElementDutyCycle = 3;
 }
 
-message ControllerDataRequestMessage {
+message ControllerDataRequest {
   ControllerDataRequestType requestType = 1;
 }

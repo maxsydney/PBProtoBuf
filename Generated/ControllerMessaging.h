@@ -66,23 +66,23 @@ enum class PumpMode : uint32_t
   MANUAL_CONTROL = 2
 };
 
-class PumpSpeedsMessage final: public ::EmbeddedProto::MessageInterface
+class PumpSpeeds final: public ::EmbeddedProto::MessageInterface
 {
   public:
-    PumpSpeedsMessage() = default;
-    PumpSpeedsMessage(const PumpSpeedsMessage& rhs )
+    PumpSpeeds() = default;
+    PumpSpeeds(const PumpSpeeds& rhs )
     {
       set_refluxPumpSpeed(rhs.get_refluxPumpSpeed());
       set_productPumpSpeed(rhs.get_productPumpSpeed());
     }
 
-    PumpSpeedsMessage(const PumpSpeedsMessage&& rhs ) noexcept
+    PumpSpeeds(const PumpSpeeds&& rhs ) noexcept
     {
       set_refluxPumpSpeed(rhs.get_refluxPumpSpeed());
       set_productPumpSpeed(rhs.get_productPumpSpeed());
     }
 
-    ~PumpSpeedsMessage() override = default;
+    ~PumpSpeeds() override = default;
 
     enum class id : uint32_t
     {
@@ -91,14 +91,14 @@ class PumpSpeedsMessage final: public ::EmbeddedProto::MessageInterface
       PRODUCTPUMPSPEED = 2
     };
 
-    PumpSpeedsMessage& operator=(const PumpSpeedsMessage& rhs)
+    PumpSpeeds& operator=(const PumpSpeeds& rhs)
     {
       set_refluxPumpSpeed(rhs.get_refluxPumpSpeed());
       set_productPumpSpeed(rhs.get_productPumpSpeed());
       return *this;
     }
 
-    PumpSpeedsMessage& operator=(const PumpSpeedsMessage&& rhs) noexcept
+    PumpSpeeds& operator=(const PumpSpeeds&& rhs) noexcept
     {
       set_refluxPumpSpeed(rhs.get_refluxPumpSpeed());
       set_productPumpSpeed(rhs.get_productPumpSpeed());
@@ -194,25 +194,25 @@ class PumpSpeedsMessage final: public ::EmbeddedProto::MessageInterface
 
 };
 
-class ControllerSettingsMessage final: public ::EmbeddedProto::MessageInterface
+class ControllerSettings final: public ::EmbeddedProto::MessageInterface
 {
   public:
-    ControllerSettingsMessage() = default;
-    ControllerSettingsMessage(const ControllerSettingsMessage& rhs )
+    ControllerSettings() = default;
+    ControllerSettings(const ControllerSettings& rhs )
     {
       set_refluxPumpMode(rhs.get_refluxPumpMode());
       set_productPumpMode(rhs.get_productPumpMode());
       set_manualPumpSpeeds(rhs.get_manualPumpSpeeds());
     }
 
-    ControllerSettingsMessage(const ControllerSettingsMessage&& rhs ) noexcept
+    ControllerSettings(const ControllerSettings&& rhs ) noexcept
     {
       set_refluxPumpMode(rhs.get_refluxPumpMode());
       set_productPumpMode(rhs.get_productPumpMode());
       set_manualPumpSpeeds(rhs.get_manualPumpSpeeds());
     }
 
-    ~ControllerSettingsMessage() override = default;
+    ~ControllerSettings() override = default;
 
     enum class id : uint32_t
     {
@@ -222,7 +222,7 @@ class ControllerSettingsMessage final: public ::EmbeddedProto::MessageInterface
       MANUALPUMPSPEEDS = 3
     };
 
-    ControllerSettingsMessage& operator=(const ControllerSettingsMessage& rhs)
+    ControllerSettings& operator=(const ControllerSettings& rhs)
     {
       set_refluxPumpMode(rhs.get_refluxPumpMode());
       set_productPumpMode(rhs.get_productPumpMode());
@@ -230,7 +230,7 @@ class ControllerSettingsMessage final: public ::EmbeddedProto::MessageInterface
       return *this;
     }
 
-    ControllerSettingsMessage& operator=(const ControllerSettingsMessage&& rhs) noexcept
+    ControllerSettings& operator=(const ControllerSettings&& rhs) noexcept
     {
       set_refluxPumpMode(rhs.get_refluxPumpMode());
       set_productPumpMode(rhs.get_productPumpMode());
@@ -251,11 +251,11 @@ class ControllerSettingsMessage final: public ::EmbeddedProto::MessageInterface
     inline PumpMode productPumpMode() const { return productPumpMode_; }
 
     inline void clear_manualPumpSpeeds() { manualPumpSpeeds_.clear(); }
-    inline void set_manualPumpSpeeds(const PumpSpeedsMessage& value) { manualPumpSpeeds_ = value; }
-    inline void set_manualPumpSpeeds(const PumpSpeedsMessage&& value) { manualPumpSpeeds_ = value; }
-    inline PumpSpeedsMessage& mutable_manualPumpSpeeds() { return manualPumpSpeeds_; }
-    inline const PumpSpeedsMessage& get_manualPumpSpeeds() const { return manualPumpSpeeds_; }
-    inline const PumpSpeedsMessage& manualPumpSpeeds() const { return manualPumpSpeeds_; }
+    inline void set_manualPumpSpeeds(const PumpSpeeds& value) { manualPumpSpeeds_ = value; }
+    inline void set_manualPumpSpeeds(const PumpSpeeds&& value) { manualPumpSpeeds_ = value; }
+    inline PumpSpeeds& mutable_manualPumpSpeeds() { return manualPumpSpeeds_; }
+    inline const PumpSpeeds& get_manualPumpSpeeds() const { return manualPumpSpeeds_; }
+    inline const PumpSpeeds& manualPumpSpeeds() const { return manualPumpSpeeds_; }
 
 
     ::EmbeddedProto::Error serialize(::EmbeddedProto::WriteBufferInterface& buffer) const override
@@ -369,15 +369,15 @@ class ControllerSettingsMessage final: public ::EmbeddedProto::MessageInterface
 
       PumpMode refluxPumpMode_ = static_cast<PumpMode>(0);
       PumpMode productPumpMode_ = static_cast<PumpMode>(0);
-      PumpSpeedsMessage manualPumpSpeeds_;
+      PumpSpeeds manualPumpSpeeds_;
 
 };
 
-class ControllerStateMessage final: public ::EmbeddedProto::MessageInterface
+class ControllerState final: public ::EmbeddedProto::MessageInterface
 {
   public:
-    ControllerStateMessage() = default;
-    ControllerStateMessage(const ControllerStateMessage& rhs )
+    ControllerState() = default;
+    ControllerState(const ControllerState& rhs )
     {
       set_propOutput(rhs.get_propOutput());
       set_integralOutput(rhs.get_integralOutput());
@@ -385,7 +385,7 @@ class ControllerStateMessage final: public ::EmbeddedProto::MessageInterface
       set_totalOutput(rhs.get_totalOutput());
     }
 
-    ControllerStateMessage(const ControllerStateMessage&& rhs ) noexcept
+    ControllerState(const ControllerState&& rhs ) noexcept
     {
       set_propOutput(rhs.get_propOutput());
       set_integralOutput(rhs.get_integralOutput());
@@ -393,7 +393,7 @@ class ControllerStateMessage final: public ::EmbeddedProto::MessageInterface
       set_totalOutput(rhs.get_totalOutput());
     }
 
-    ~ControllerStateMessage() override = default;
+    ~ControllerState() override = default;
 
     enum class id : uint32_t
     {
@@ -404,7 +404,7 @@ class ControllerStateMessage final: public ::EmbeddedProto::MessageInterface
       TOTALOUTPUT = 4
     };
 
-    ControllerStateMessage& operator=(const ControllerStateMessage& rhs)
+    ControllerState& operator=(const ControllerState& rhs)
     {
       set_propOutput(rhs.get_propOutput());
       set_integralOutput(rhs.get_integralOutput());
@@ -413,7 +413,7 @@ class ControllerStateMessage final: public ::EmbeddedProto::MessageInterface
       return *this;
     }
 
-    ControllerStateMessage& operator=(const ControllerStateMessage&& rhs) noexcept
+    ControllerState& operator=(const ControllerState&& rhs) noexcept
     {
       set_propOutput(rhs.get_propOutput());
       set_integralOutput(rhs.get_integralOutput());
@@ -547,23 +547,23 @@ class ControllerStateMessage final: public ::EmbeddedProto::MessageInterface
 
 };
 
-class IIRLowpassFilterConfigMessage final: public ::EmbeddedProto::MessageInterface
+class IIRLowpassFilterConfig final: public ::EmbeddedProto::MessageInterface
 {
   public:
-    IIRLowpassFilterConfigMessage() = default;
-    IIRLowpassFilterConfigMessage(const IIRLowpassFilterConfigMessage& rhs )
+    IIRLowpassFilterConfig() = default;
+    IIRLowpassFilterConfig(const IIRLowpassFilterConfig& rhs )
     {
       set_sampleFreq(rhs.get_sampleFreq());
       set_cutoffFreq(rhs.get_cutoffFreq());
     }
 
-    IIRLowpassFilterConfigMessage(const IIRLowpassFilterConfigMessage&& rhs ) noexcept
+    IIRLowpassFilterConfig(const IIRLowpassFilterConfig&& rhs ) noexcept
     {
       set_sampleFreq(rhs.get_sampleFreq());
       set_cutoffFreq(rhs.get_cutoffFreq());
     }
 
-    ~IIRLowpassFilterConfigMessage() override = default;
+    ~IIRLowpassFilterConfig() override = default;
 
     enum class id : uint32_t
     {
@@ -572,14 +572,14 @@ class IIRLowpassFilterConfigMessage final: public ::EmbeddedProto::MessageInterf
       CUTOFFFREQ = 2
     };
 
-    IIRLowpassFilterConfigMessage& operator=(const IIRLowpassFilterConfigMessage& rhs)
+    IIRLowpassFilterConfig& operator=(const IIRLowpassFilterConfig& rhs)
     {
       set_sampleFreq(rhs.get_sampleFreq());
       set_cutoffFreq(rhs.get_cutoffFreq());
       return *this;
     }
 
-    IIRLowpassFilterConfigMessage& operator=(const IIRLowpassFilterConfigMessage&& rhs) noexcept
+    IIRLowpassFilterConfig& operator=(const IIRLowpassFilterConfig&& rhs) noexcept
     {
       set_sampleFreq(rhs.get_sampleFreq());
       set_cutoffFreq(rhs.get_cutoffFreq());
@@ -675,11 +675,11 @@ class IIRLowpassFilterConfigMessage final: public ::EmbeddedProto::MessageInterf
 
 };
 
-class ControllerTuningMessage final: public ::EmbeddedProto::MessageInterface
+class ControllerTuning final: public ::EmbeddedProto::MessageInterface
 {
   public:
-    ControllerTuningMessage() = default;
-    ControllerTuningMessage(const ControllerTuningMessage& rhs )
+    ControllerTuning() = default;
+    ControllerTuning(const ControllerTuning& rhs )
     {
       set_setpoint(rhs.get_setpoint());
       set_PGain(rhs.get_PGain());
@@ -688,7 +688,7 @@ class ControllerTuningMessage final: public ::EmbeddedProto::MessageInterface
       set_derivFilterSettings(rhs.get_derivFilterSettings());
     }
 
-    ControllerTuningMessage(const ControllerTuningMessage&& rhs ) noexcept
+    ControllerTuning(const ControllerTuning&& rhs ) noexcept
     {
       set_setpoint(rhs.get_setpoint());
       set_PGain(rhs.get_PGain());
@@ -697,7 +697,7 @@ class ControllerTuningMessage final: public ::EmbeddedProto::MessageInterface
       set_derivFilterSettings(rhs.get_derivFilterSettings());
     }
 
-    ~ControllerTuningMessage() override = default;
+    ~ControllerTuning() override = default;
 
     enum class id : uint32_t
     {
@@ -709,7 +709,7 @@ class ControllerTuningMessage final: public ::EmbeddedProto::MessageInterface
       DERIVFILTERSETTINGS = 5
     };
 
-    ControllerTuningMessage& operator=(const ControllerTuningMessage& rhs)
+    ControllerTuning& operator=(const ControllerTuning& rhs)
     {
       set_setpoint(rhs.get_setpoint());
       set_PGain(rhs.get_PGain());
@@ -719,7 +719,7 @@ class ControllerTuningMessage final: public ::EmbeddedProto::MessageInterface
       return *this;
     }
 
-    ControllerTuningMessage& operator=(const ControllerTuningMessage&& rhs) noexcept
+    ControllerTuning& operator=(const ControllerTuning&& rhs) noexcept
     {
       set_setpoint(rhs.get_setpoint());
       set_PGain(rhs.get_PGain());
@@ -758,11 +758,11 @@ class ControllerTuningMessage final: public ::EmbeddedProto::MessageInterface
     inline EmbeddedProto::doublefixed::FIELD_TYPE DGain() const { return DGain_.get(); }
 
     inline void clear_derivFilterSettings() { derivFilterSettings_.clear(); }
-    inline void set_derivFilterSettings(const IIRLowpassFilterConfigMessage& value) { derivFilterSettings_ = value; }
-    inline void set_derivFilterSettings(const IIRLowpassFilterConfigMessage&& value) { derivFilterSettings_ = value; }
-    inline IIRLowpassFilterConfigMessage& mutable_derivFilterSettings() { return derivFilterSettings_; }
-    inline const IIRLowpassFilterConfigMessage& get_derivFilterSettings() const { return derivFilterSettings_; }
-    inline const IIRLowpassFilterConfigMessage& derivFilterSettings() const { return derivFilterSettings_; }
+    inline void set_derivFilterSettings(const IIRLowpassFilterConfig& value) { derivFilterSettings_ = value; }
+    inline void set_derivFilterSettings(const IIRLowpassFilterConfig&& value) { derivFilterSettings_ = value; }
+    inline IIRLowpassFilterConfig& mutable_derivFilterSettings() { return derivFilterSettings_; }
+    inline const IIRLowpassFilterConfig& get_derivFilterSettings() const { return derivFilterSettings_; }
+    inline const IIRLowpassFilterConfig& derivFilterSettings() const { return derivFilterSettings_; }
 
 
     ::EmbeddedProto::Error serialize(::EmbeddedProto::WriteBufferInterface& buffer) const override
@@ -868,29 +868,29 @@ class ControllerTuningMessage final: public ::EmbeddedProto::MessageInterface
       EmbeddedProto::doublefixed PGain_ = 0.0;
       EmbeddedProto::doublefixed IGain_ = 0.0;
       EmbeddedProto::doublefixed DGain_ = 0.0;
-      IIRLowpassFilterConfigMessage derivFilterSettings_;
+      IIRLowpassFilterConfig derivFilterSettings_;
 
 };
 
-class ControllerCommandMessage final: public ::EmbeddedProto::MessageInterface
+class ControllerCommand final: public ::EmbeddedProto::MessageInterface
 {
   public:
-    ControllerCommandMessage() = default;
-    ControllerCommandMessage(const ControllerCommandMessage& rhs )
+    ControllerCommand() = default;
+    ControllerCommand(const ControllerCommand& rhs )
     {
       set_fanState(rhs.get_fanState());
       set_LPElementDutyCycle(rhs.get_LPElementDutyCycle());
       set_HPElementDutyCycle(rhs.get_HPElementDutyCycle());
     }
 
-    ControllerCommandMessage(const ControllerCommandMessage&& rhs ) noexcept
+    ControllerCommand(const ControllerCommand&& rhs ) noexcept
     {
       set_fanState(rhs.get_fanState());
       set_LPElementDutyCycle(rhs.get_LPElementDutyCycle());
       set_HPElementDutyCycle(rhs.get_HPElementDutyCycle());
     }
 
-    ~ControllerCommandMessage() override = default;
+    ~ControllerCommand() override = default;
 
     enum class id : uint32_t
     {
@@ -900,7 +900,7 @@ class ControllerCommandMessage final: public ::EmbeddedProto::MessageInterface
       HPELEMENTDUTYCYCLE = 3
     };
 
-    ControllerCommandMessage& operator=(const ControllerCommandMessage& rhs)
+    ControllerCommand& operator=(const ControllerCommand& rhs)
     {
       set_fanState(rhs.get_fanState());
       set_LPElementDutyCycle(rhs.get_LPElementDutyCycle());
@@ -908,7 +908,7 @@ class ControllerCommandMessage final: public ::EmbeddedProto::MessageInterface
       return *this;
     }
 
-    ControllerCommandMessage& operator=(const ControllerCommandMessage&& rhs) noexcept
+    ControllerCommand& operator=(const ControllerCommand&& rhs) noexcept
     {
       set_fanState(rhs.get_fanState());
       set_LPElementDutyCycle(rhs.get_LPElementDutyCycle());
@@ -1037,21 +1037,21 @@ class ControllerCommandMessage final: public ::EmbeddedProto::MessageInterface
 
 };
 
-class ControllerDataRequestMessage final: public ::EmbeddedProto::MessageInterface
+class ControllerDataRequest final: public ::EmbeddedProto::MessageInterface
 {
   public:
-    ControllerDataRequestMessage() = default;
-    ControllerDataRequestMessage(const ControllerDataRequestMessage& rhs )
+    ControllerDataRequest() = default;
+    ControllerDataRequest(const ControllerDataRequest& rhs )
     {
       set_requestType(rhs.get_requestType());
     }
 
-    ControllerDataRequestMessage(const ControllerDataRequestMessage&& rhs ) noexcept
+    ControllerDataRequest(const ControllerDataRequest&& rhs ) noexcept
     {
       set_requestType(rhs.get_requestType());
     }
 
-    ~ControllerDataRequestMessage() override = default;
+    ~ControllerDataRequest() override = default;
 
     enum class id : uint32_t
     {
@@ -1059,13 +1059,13 @@ class ControllerDataRequestMessage final: public ::EmbeddedProto::MessageInterfa
       REQUESTTYPE = 1
     };
 
-    ControllerDataRequestMessage& operator=(const ControllerDataRequestMessage& rhs)
+    ControllerDataRequest& operator=(const ControllerDataRequest& rhs)
     {
       set_requestType(rhs.get_requestType());
       return *this;
     }
 
-    ControllerDataRequestMessage& operator=(const ControllerDataRequestMessage&& rhs) noexcept
+    ControllerDataRequest& operator=(const ControllerDataRequest&& rhs) noexcept
     {
       set_requestType(rhs.get_requestType());
       return *this;
