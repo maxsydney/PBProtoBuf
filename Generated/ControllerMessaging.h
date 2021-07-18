@@ -383,6 +383,7 @@ class ControllerState final: public ::EmbeddedProto::MessageInterface
       set_integralOutput(rhs.get_integralOutput());
       set_derivOutput(rhs.get_derivOutput());
       set_totalOutput(rhs.get_totalOutput());
+      set_timeStamp(rhs.get_timeStamp());
     }
 
     ControllerState(const ControllerState&& rhs ) noexcept
@@ -391,6 +392,7 @@ class ControllerState final: public ::EmbeddedProto::MessageInterface
       set_integralOutput(rhs.get_integralOutput());
       set_derivOutput(rhs.get_derivOutput());
       set_totalOutput(rhs.get_totalOutput());
+      set_timeStamp(rhs.get_timeStamp());
     }
 
     ~ControllerState() override = default;
@@ -401,7 +403,8 @@ class ControllerState final: public ::EmbeddedProto::MessageInterface
       PROPOUTPUT = 1,
       INTEGRALOUTPUT = 2,
       DERIVOUTPUT = 3,
-      TOTALOUTPUT = 4
+      TOTALOUTPUT = 4,
+      TIMESTAMP = 5
     };
 
     ControllerState& operator=(const ControllerState& rhs)
@@ -410,6 +413,7 @@ class ControllerState final: public ::EmbeddedProto::MessageInterface
       set_integralOutput(rhs.get_integralOutput());
       set_derivOutput(rhs.get_derivOutput());
       set_totalOutput(rhs.get_totalOutput());
+      set_timeStamp(rhs.get_timeStamp());
       return *this;
     }
 
@@ -419,6 +423,7 @@ class ControllerState final: public ::EmbeddedProto::MessageInterface
       set_integralOutput(rhs.get_integralOutput());
       set_derivOutput(rhs.get_derivOutput());
       set_totalOutput(rhs.get_totalOutput());
+      set_timeStamp(rhs.get_timeStamp());
       return *this;
     }
 
@@ -450,6 +455,13 @@ class ControllerState final: public ::EmbeddedProto::MessageInterface
     inline const EmbeddedProto::doublefixed& get_totalOutput() const { return totalOutput_; }
     inline EmbeddedProto::doublefixed::FIELD_TYPE totalOutput() const { return totalOutput_.get(); }
 
+    inline void clear_timeStamp() { timeStamp_.clear(); }
+    inline void set_timeStamp(const EmbeddedProto::uint32& value) { timeStamp_ = value; }
+    inline void set_timeStamp(const EmbeddedProto::uint32&& value) { timeStamp_ = value; }
+    inline EmbeddedProto::uint32& mutable_timeStamp() { return timeStamp_; }
+    inline const EmbeddedProto::uint32& get_timeStamp() const { return timeStamp_; }
+    inline EmbeddedProto::uint32::FIELD_TYPE timeStamp() const { return timeStamp_.get(); }
+
 
     ::EmbeddedProto::Error serialize(::EmbeddedProto::WriteBufferInterface& buffer) const override
     {
@@ -473,6 +485,11 @@ class ControllerState final: public ::EmbeddedProto::MessageInterface
       if((0.0 != totalOutput_.get()) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
       {
         return_value = totalOutput_.serialize_with_id(static_cast<uint32_t>(id::TOTALOUTPUT), buffer);
+      }
+
+      if((0U != timeStamp_.get()) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
+      {
+        return_value = timeStamp_.serialize_with_id(static_cast<uint32_t>(id::TIMESTAMP), buffer);
       }
 
       return return_value;
@@ -507,6 +524,10 @@ class ControllerState final: public ::EmbeddedProto::MessageInterface
             return_value = totalOutput_.deserialize_check_type(buffer, wire_type);
             break;
 
+          case id::TIMESTAMP:
+            return_value = timeStamp_.deserialize_check_type(buffer, wire_type);
+            break;
+
           default:
             break;
         }
@@ -535,6 +556,7 @@ class ControllerState final: public ::EmbeddedProto::MessageInterface
       clear_integralOutput();
       clear_derivOutput();
       clear_totalOutput();
+      clear_timeStamp();
 
     }
 
@@ -544,6 +566,7 @@ class ControllerState final: public ::EmbeddedProto::MessageInterface
       EmbeddedProto::doublefixed integralOutput_ = 0.0;
       EmbeddedProto::doublefixed derivOutput_ = 0.0;
       EmbeddedProto::doublefixed totalOutput_ = 0.0;
+      EmbeddedProto::uint32 timeStamp_ = 0U;
 
 };
 

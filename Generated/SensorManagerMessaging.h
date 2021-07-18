@@ -628,11 +628,11 @@ class TemperatureData final: public ::EmbeddedProto::MessageInterface
     inline EmbeddedProto::doublefixed::FIELD_TYPE boilerTemp() const { return boilerTemp_.get(); }
 
     inline void clear_timeStamp() { timeStamp_.clear(); }
-    inline void set_timeStamp(const EmbeddedProto::uint64& value) { timeStamp_ = value; }
-    inline void set_timeStamp(const EmbeddedProto::uint64&& value) { timeStamp_ = value; }
-    inline EmbeddedProto::uint64& mutable_timeStamp() { return timeStamp_; }
-    inline const EmbeddedProto::uint64& get_timeStamp() const { return timeStamp_; }
-    inline EmbeddedProto::uint64::FIELD_TYPE timeStamp() const { return timeStamp_.get(); }
+    inline void set_timeStamp(const EmbeddedProto::uint32& value) { timeStamp_ = value; }
+    inline void set_timeStamp(const EmbeddedProto::uint32&& value) { timeStamp_ = value; }
+    inline EmbeddedProto::uint32& mutable_timeStamp() { return timeStamp_; }
+    inline const EmbeddedProto::uint32& get_timeStamp() const { return timeStamp_; }
+    inline EmbeddedProto::uint32::FIELD_TYPE timeStamp() const { return timeStamp_.get(); }
 
 
     ::EmbeddedProto::Error serialize(::EmbeddedProto::WriteBufferInterface& buffer) const override
@@ -749,7 +749,7 @@ class TemperatureData final: public ::EmbeddedProto::MessageInterface
       EmbeddedProto::doublefixed prodCondensorTemp_ = 0.0;
       EmbeddedProto::doublefixed radiatorTemp_ = 0.0;
       EmbeddedProto::doublefixed boilerTemp_ = 0.0;
-      EmbeddedProto::uint64 timeStamp_ = 0U;
+      EmbeddedProto::uint32 timeStamp_ = 0U;
 
 };
 

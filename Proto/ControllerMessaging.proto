@@ -34,6 +34,7 @@ message ControllerState {
     double integralOutput = 2;
     double derivOutput = 3;
     double totalOutput = 4;
+    uint32 timeStamp = 5;
 }
 
 message IIRLowpassFilterConfig {
