@@ -71,14 +71,12 @@ class MessageWrapper final: public ::EmbeddedProto::MessageInterface
     MessageWrapper(const MessageWrapper& rhs )
     {
       set_type(rhs.get_type());
-      set_timeStamp(rhs.get_timeStamp());
       set_payload(rhs.get_payload());
     }
 
     MessageWrapper(const MessageWrapper&& rhs ) noexcept
     {
       set_type(rhs.get_type());
-      set_timeStamp(rhs.get_timeStamp());
       set_payload(rhs.get_payload());
     }
 
@@ -88,14 +86,12 @@ class MessageWrapper final: public ::EmbeddedProto::MessageInterface
     {
       NOT_SET = 0,
       TYPE = 1,
-      TIMESTAMP = 2,
       PAYLOAD = 3
     };
 
     MessageWrapper& operator=(const MessageWrapper& rhs)
     {
       set_type(rhs.get_type());
-      set_timeStamp(rhs.get_timeStamp());
       set_payload(rhs.get_payload());
       return *this;
     }
@@ -103,7 +99,6 @@ class MessageWrapper final: public ::EmbeddedProto::MessageInterface
     MessageWrapper& operator=(const MessageWrapper&& rhs) noexcept
     {
       set_type(rhs.get_type());
-      set_timeStamp(rhs.get_timeStamp());
       set_payload(rhs.get_payload());
       return *this;
     }
@@ -113,13 +108,6 @@ class MessageWrapper final: public ::EmbeddedProto::MessageInterface
     inline void set_type(const PBMessageType&& value) { type_ = value; }
     inline const PBMessageType& get_type() const { return type_; }
     inline PBMessageType type() const { return type_; }
-
-    inline void clear_timeStamp() { timeStamp_.clear(); }
-    inline void set_timeStamp(const EmbeddedProto::uint64& value) { timeStamp_ = value; }
-    inline void set_timeStamp(const EmbeddedProto::uint64&& value) { timeStamp_ = value; }
-    inline EmbeddedProto::uint64& mutable_timeStamp() { return timeStamp_; }
-    inline const EmbeddedProto::uint64& get_timeStamp() const { return timeStamp_; }
-    inline EmbeddedProto::uint64::FIELD_TYPE timeStamp() const { return timeStamp_.get(); }
 
     inline void clear_payload() { payload_.clear(); }
     inline ::EmbeddedProto::FieldBytes<payload_LENGTH>& mutable_payload() { return payload_; }
@@ -137,11 +125,6 @@ class MessageWrapper final: public ::EmbeddedProto::MessageInterface
         EmbeddedProto::uint32 value = 0;
         value.set(static_cast<uint32_t>(type_));
         return_value = value.serialize_with_id(static_cast<uint32_t>(id::TYPE), buffer);
-      }
-
-      if((0U != timeStamp_.get()) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
-      {
-        return_value = timeStamp_.serialize_with_id(static_cast<uint32_t>(id::TIMESTAMP), buffer);
       }
 
       if(::EmbeddedProto::Error::NO_ERRORS == return_value)
@@ -182,10 +165,6 @@ class MessageWrapper final: public ::EmbeddedProto::MessageInterface
             }
             break;
 
-          case id::TIMESTAMP:
-            return_value = timeStamp_.deserialize_check_type(buffer, wire_type);
-            break;
-
           case id::PAYLOAD:
             return_value = payload_.deserialize_check_type(buffer, wire_type);
             break;
@@ -215,7 +194,6 @@ class MessageWrapper final: public ::EmbeddedProto::MessageInterface
     void clear() override
     {
       clear_type();
-      clear_timeStamp();
       clear_payload();
 
     }
@@ -223,7 +201,6 @@ class MessageWrapper final: public ::EmbeddedProto::MessageInterface
     private:
 
       PBMessageType type_ = static_cast<PBMessageType>(0);
-      EmbeddedProto::uint64 timeStamp_ = 0U;
       ::EmbeddedProto::FieldBytes<payload_LENGTH> payload_;
 
 };

@@ -30,6 +30,7 @@ message TemperatureData {
     double prodCondensorTemp = 3;
     double radiatorTemp = 4;
     double boilerTemp = 5;
+    uint64 timeStamp = 6;
 }
 
 message DeviceData {

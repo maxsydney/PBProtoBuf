@@ -544,6 +544,7 @@ class TemperatureData final: public ::EmbeddedProto::MessageInterface
       set_prodCondensorTemp(rhs.get_prodCondensorTemp());
       set_radiatorTemp(rhs.get_radiatorTemp());
       set_boilerTemp(rhs.get_boilerTemp());
+      set_timeStamp(rhs.get_timeStamp());
     }
 
     TemperatureData(const TemperatureData&& rhs ) noexcept
@@ -553,6 +554,7 @@ class TemperatureData final: public ::EmbeddedProto::MessageInterface
       set_prodCondensorTemp(rhs.get_prodCondensorTemp());
       set_radiatorTemp(rhs.get_radiatorTemp());
       set_boilerTemp(rhs.get_boilerTemp());
+      set_timeStamp(rhs.get_timeStamp());
     }
 
     ~TemperatureData() override = default;
@@ -564,7 +566,8 @@ class TemperatureData final: public ::EmbeddedProto::MessageInterface
       REFLUXCONDENSORTEMP = 2,
       PRODCONDENSORTEMP = 3,
       RADIATORTEMP = 4,
-      BOILERTEMP = 5
+      BOILERTEMP = 5,
+      TIMESTAMP = 6
     };
 
     TemperatureData& operator=(const TemperatureData& rhs)
@@ -574,6 +577,7 @@ class TemperatureData final: public ::EmbeddedProto::MessageInterface
       set_prodCondensorTemp(rhs.get_prodCondensorTemp());
       set_radiatorTemp(rhs.get_radiatorTemp());
       set_boilerTemp(rhs.get_boilerTemp());
+      set_timeStamp(rhs.get_timeStamp());
       return *this;
     }
 
@@ -584,6 +588,7 @@ class TemperatureData final: public ::EmbeddedProto::MessageInterface
       set_prodCondensorTemp(rhs.get_prodCondensorTemp());
       set_radiatorTemp(rhs.get_radiatorTemp());
       set_boilerTemp(rhs.get_boilerTemp());
+      set_timeStamp(rhs.get_timeStamp());
       return *this;
     }
 
@@ -622,6 +627,13 @@ class TemperatureData final: public ::EmbeddedProto::MessageInterface
     inline const EmbeddedProto::doublefixed& get_boilerTemp() const { return boilerTemp_; }
     inline EmbeddedProto::doublefixed::FIELD_TYPE boilerTemp() const { return boilerTemp_.get(); }
 
+    inline void clear_timeStamp() { timeStamp_.clear(); }
+    inline void set_timeStamp(const EmbeddedProto::uint64& value) { timeStamp_ = value; }
+    inline void set_timeStamp(const EmbeddedProto::uint64&& value) { timeStamp_ = value; }
+    inline EmbeddedProto::uint64& mutable_timeStamp() { return timeStamp_; }
+    inline const EmbeddedProto::uint64& get_timeStamp() const { return timeStamp_; }
+    inline EmbeddedProto::uint64::FIELD_TYPE timeStamp() const { return timeStamp_.get(); }
+
 
     ::EmbeddedProto::Error serialize(::EmbeddedProto::WriteBufferInterface& buffer) const override
     {
@@ -650,6 +662,11 @@ class TemperatureData final: public ::EmbeddedProto::MessageInterface
       if((0.0 != boilerTemp_.get()) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
       {
         return_value = boilerTemp_.serialize_with_id(static_cast<uint32_t>(id::BOILERTEMP), buffer);
+      }
+
+      if((0U != timeStamp_.get()) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
+      {
+        return_value = timeStamp_.serialize_with_id(static_cast<uint32_t>(id::TIMESTAMP), buffer);
       }
 
       return return_value;
@@ -688,6 +705,10 @@ class TemperatureData final: public ::EmbeddedProto::MessageInterface
             return_value = boilerTemp_.deserialize_check_type(buffer, wire_type);
             break;
 
+          case id::TIMESTAMP:
+            return_value = timeStamp_.deserialize_check_type(buffer, wire_type);
+            break;
+
           default:
             break;
         }
@@ -717,6 +738,7 @@ class TemperatureData final: public ::EmbeddedProto::MessageInterface
       clear_prodCondensorTemp();
       clear_radiatorTemp();
       clear_boilerTemp();
+      clear_timeStamp();
 
     }
 
@@ -727,6 +749,7 @@ class TemperatureData final: public ::EmbeddedProto::MessageInterface
       EmbeddedProto::doublefixed prodCondensorTemp_ = 0.0;
       EmbeddedProto::doublefixed radiatorTemp_ = 0.0;
       EmbeddedProto::doublefixed boilerTemp_ = 0.0;
+      EmbeddedProto::uint64 timeStamp_ = 0U;
 
 };
 
