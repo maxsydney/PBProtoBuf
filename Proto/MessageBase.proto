@@ -20,4 +20,4 @@ enum PBMessageType {
 message MessageWrapper {
     PBMessageType type = 1;
     bytes payload = 3;
-  }
+}

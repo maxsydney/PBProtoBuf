@@ -570,23 +570,23 @@ class ControllerState final: public ::EmbeddedProto::MessageInterface
 
 };
 
-class IIRLowpassFilterConfig final: public ::EmbeddedProto::MessageInterface
+class IIRLowpassFilterTuning final: public ::EmbeddedProto::MessageInterface
 {
   public:
-    IIRLowpassFilterConfig() = default;
-    IIRLowpassFilterConfig(const IIRLowpassFilterConfig& rhs )
+    IIRLowpassFilterTuning() = default;
+    IIRLowpassFilterTuning(const IIRLowpassFilterTuning& rhs )
     {
       set_sampleFreq(rhs.get_sampleFreq());
       set_cutoffFreq(rhs.get_cutoffFreq());
     }
 
-    IIRLowpassFilterConfig(const IIRLowpassFilterConfig&& rhs ) noexcept
+    IIRLowpassFilterTuning(const IIRLowpassFilterTuning&& rhs ) noexcept
     {
       set_sampleFreq(rhs.get_sampleFreq());
       set_cutoffFreq(rhs.get_cutoffFreq());
     }
 
-    ~IIRLowpassFilterConfig() override = default;
+    ~IIRLowpassFilterTuning() override = default;
 
     enum class id : uint32_t
     {
@@ -595,14 +595,14 @@ class IIRLowpassFilterConfig final: public ::EmbeddedProto::MessageInterface
       CUTOFFFREQ = 2
     };
 
-    IIRLowpassFilterConfig& operator=(const IIRLowpassFilterConfig& rhs)
+    IIRLowpassFilterTuning& operator=(const IIRLowpassFilterTuning& rhs)
     {
       set_sampleFreq(rhs.get_sampleFreq());
       set_cutoffFreq(rhs.get_cutoffFreq());
       return *this;
     }
 
-    IIRLowpassFilterConfig& operator=(const IIRLowpassFilterConfig&& rhs) noexcept
+    IIRLowpassFilterTuning& operator=(const IIRLowpassFilterTuning&& rhs) noexcept
     {
       set_sampleFreq(rhs.get_sampleFreq());
       set_cutoffFreq(rhs.get_cutoffFreq());
@@ -708,7 +708,6 @@ class ControllerTuning final: public ::EmbeddedProto::MessageInterface
       set_PGain(rhs.get_PGain());
       set_IGain(rhs.get_IGain());
       set_DGain(rhs.get_DGain());
-      set_derivFilterSettings(rhs.get_derivFilterSettings());
     }
 
     ControllerTuning(const ControllerTuning&& rhs ) noexcept
@@ -717,7 +716,6 @@ class ControllerTuning final: public ::EmbeddedProto::MessageInterface
       set_PGain(rhs.get_PGain());
       set_IGain(rhs.get_IGain());
       set_DGain(rhs.get_DGain());
-      set_derivFilterSettings(rhs.get_derivFilterSettings());
     }
 
     ~ControllerTuning() override = default;
@@ -728,8 +726,7 @@ class ControllerTuning final: public ::EmbeddedProto::MessageInterface
       SETPOINT = 1,
       PGAIN = 2,
       IGAIN = 3,
-      DGAIN = 4,
-      DERIVFILTERSETTINGS = 5
+      DGAIN = 4
     };
 
     ControllerTuning& operator=(const ControllerTuning& rhs)
@@ -738,7 +735,6 @@ class ControllerTuning final: public ::EmbeddedProto::MessageInterface
       set_PGain(rhs.get_PGain());
       set_IGain(rhs.get_IGain());
       set_DGain(rhs.get_DGain());
-      set_derivFilterSettings(rhs.get_derivFilterSettings());
       return *this;
     }
 
@@ -748,7 +744,6 @@ class ControllerTuning final: public ::EmbeddedProto::MessageInterface
       set_PGain(rhs.get_PGain());
       set_IGain(rhs.get_IGain());
       set_DGain(rhs.get_DGain());
-      set_derivFilterSettings(rhs.get_derivFilterSettings());
       return *this;
     }
 
@@ -780,13 +775,6 @@ class ControllerTuning final: public ::EmbeddedProto::MessageInterface
     inline const EmbeddedProto::doublefixed& get_DGain() const { return DGain_; }
     inline EmbeddedProto::doublefixed::FIELD_TYPE DGain() const { return DGain_.get(); }
 
-    inline void clear_derivFilterSettings() { derivFilterSettings_.clear(); }
-    inline void set_derivFilterSettings(const IIRLowpassFilterConfig& value) { derivFilterSettings_ = value; }
-    inline void set_derivFilterSettings(const IIRLowpassFilterConfig&& value) { derivFilterSettings_ = value; }
-    inline IIRLowpassFilterConfig& mutable_derivFilterSettings() { return derivFilterSettings_; }
-    inline const IIRLowpassFilterConfig& get_derivFilterSettings() const { return derivFilterSettings_; }
-    inline const IIRLowpassFilterConfig& derivFilterSettings() const { return derivFilterSettings_; }
-
 
     ::EmbeddedProto::Error serialize(::EmbeddedProto::WriteBufferInterface& buffer) const override
     {
@@ -810,11 +798,6 @@ class ControllerTuning final: public ::EmbeddedProto::MessageInterface
       if((0.0 != DGain_.get()) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
       {
         return_value = DGain_.serialize_with_id(static_cast<uint32_t>(id::DGAIN), buffer);
-      }
-
-      if(::EmbeddedProto::Error::NO_ERRORS == return_value)
-      {
-        return_value = derivFilterSettings_.serialize_with_id(static_cast<uint32_t>(id::DERIVFILTERSETTINGS), buffer);
       }
 
       return return_value;
@@ -849,10 +832,6 @@ class ControllerTuning final: public ::EmbeddedProto::MessageInterface
             return_value = DGain_.deserialize_check_type(buffer, wire_type);
             break;
 
-          case id::DERIVFILTERSETTINGS:
-            return_value = derivFilterSettings_.deserialize_check_type(buffer, wire_type);
-            break;
-
           default:
             break;
         }
@@ -881,7 +860,6 @@ class ControllerTuning final: public ::EmbeddedProto::MessageInterface
       clear_PGain();
       clear_IGain();
       clear_DGain();
-      clear_derivFilterSettings();
 
     }
 
@@ -891,7 +869,6 @@ class ControllerTuning final: public ::EmbeddedProto::MessageInterface
       EmbeddedProto::doublefixed PGain_ = 0.0;
       EmbeddedProto::doublefixed IGain_ = 0.0;
       EmbeddedProto::doublefixed DGain_ = 0.0;
-      IIRLowpassFilterConfig derivFilterSettings_;
 
 };
 

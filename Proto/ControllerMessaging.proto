@@ -37,7 +37,7 @@ message ControllerState {
     uint32 timeStamp = 5;
 }
 
-message IIRLowpassFilterConfig {
+message IIRLowpassFilterTuning {
   double sampleFreq = 1;
   double cutoffFreq = 2;
 }
@@ -47,7 +47,6 @@ message ControllerTuning {
   double PGain = 2;
   double IGain = 3;
   double DGain = 4;
-  IIRLowpassFilterConfig derivFilterSettings= 5;
 }
 
 message ControllerCommand {
