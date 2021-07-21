@@ -708,6 +708,7 @@ class ControllerTuning final: public ::EmbeddedProto::MessageInterface
       set_PGain(rhs.get_PGain());
       set_IGain(rhs.get_IGain());
       set_DGain(rhs.get_DGain());
+      set_LPFTuning(rhs.get_LPFTuning());
     }
 
     ControllerTuning(const ControllerTuning&& rhs ) noexcept
@@ -716,6 +717,7 @@ class ControllerTuning final: public ::EmbeddedProto::MessageInterface
       set_PGain(rhs.get_PGain());
       set_IGain(rhs.get_IGain());
       set_DGain(rhs.get_DGain());
+      set_LPFTuning(rhs.get_LPFTuning());
     }
 
     ~ControllerTuning() override = default;
@@ -726,7 +728,8 @@ class ControllerTuning final: public ::EmbeddedProto::MessageInterface
       SETPOINT = 1,
       PGAIN = 2,
       IGAIN = 3,
-      DGAIN = 4
+      DGAIN = 4,
+      LPFTUNING = 5
     };
 
     ControllerTuning& operator=(const ControllerTuning& rhs)
@@ -735,6 +738,7 @@ class ControllerTuning final: public ::EmbeddedProto::MessageInterface
       set_PGain(rhs.get_PGain());
       set_IGain(rhs.get_IGain());
       set_DGain(rhs.get_DGain());
+      set_LPFTuning(rhs.get_LPFTuning());
       return *this;
     }
 
@@ -744,6 +748,7 @@ class ControllerTuning final: public ::EmbeddedProto::MessageInterface
       set_PGain(rhs.get_PGain());
       set_IGain(rhs.get_IGain());
       set_DGain(rhs.get_DGain());
+      set_LPFTuning(rhs.get_LPFTuning());
       return *this;
     }
 
@@ -775,6 +780,13 @@ class ControllerTuning final: public ::EmbeddedProto::MessageInterface
     inline const EmbeddedProto::doublefixed& get_DGain() const { return DGain_; }
     inline EmbeddedProto::doublefixed::FIELD_TYPE DGain() const { return DGain_.get(); }
 
+    inline void clear_LPFTuning() { LPFTuning_.clear(); }
+    inline void set_LPFTuning(const IIRLowpassFilterTuning& value) { LPFTuning_ = value; }
+    inline void set_LPFTuning(const IIRLowpassFilterTuning&& value) { LPFTuning_ = value; }
+    inline IIRLowpassFilterTuning& mutable_LPFTuning() { return LPFTuning_; }
+    inline const IIRLowpassFilterTuning& get_LPFTuning() const { return LPFTuning_; }
+    inline const IIRLowpassFilterTuning& LPFTuning() const { return LPFTuning_; }
+
 
     ::EmbeddedProto::Error serialize(::EmbeddedProto::WriteBufferInterface& buffer) const override
     {
@@ -798,6 +810,11 @@ class ControllerTuning final: public ::EmbeddedProto::MessageInterface
       if((0.0 != DGain_.get()) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
       {
         return_value = DGain_.serialize_with_id(static_cast<uint32_t>(id::DGAIN), buffer);
+      }
+
+      if(::EmbeddedProto::Error::NO_ERRORS == return_value)
+      {
+        return_value = LPFTuning_.serialize_with_id(static_cast<uint32_t>(id::LPFTUNING), buffer);
       }
 
       return return_value;
@@ -832,6 +849,10 @@ class ControllerTuning final: public ::EmbeddedProto::MessageInterface
             return_value = DGain_.deserialize_check_type(buffer, wire_type);
             break;
 
+          case id::LPFTUNING:
+            return_value = LPFTuning_.deserialize_check_type(buffer, wire_type);
+            break;
+
           default:
             break;
         }
@@ -860,6 +881,7 @@ class ControllerTuning final: public ::EmbeddedProto::MessageInterface
       clear_PGain();
       clear_IGain();
       clear_DGain();
+      clear_LPFTuning();
 
     }
 
@@ -869,6 +891,7 @@ class ControllerTuning final: public ::EmbeddedProto::MessageInterface
       EmbeddedProto::doublefixed PGain_ = 0.0;
       EmbeddedProto::doublefixed IGain_ = 0.0;
       EmbeddedProto::doublefixed DGain_ = 0.0;
+      IIRLowpassFilterTuning LPFTuning_;
 
 };
 

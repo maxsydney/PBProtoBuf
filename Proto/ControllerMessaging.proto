@@ -47,6 +47,7 @@ message ControllerTuning {
   double PGain = 2;
   double IGain = 3;
   double DGain = 4;
+  IIRLowpassFilterTuning LPFTuning = 5;
 }
 
 message ControllerCommand {
