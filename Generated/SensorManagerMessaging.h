@@ -49,7 +49,7 @@
 enum class SensorManagerCmdType : uint32_t
 {
   CMD_NONE = 0,
-  CMD_BROADCAST_SENSORS = 2
+  CMD_BROADCAST_SENSORS = 1
 };
 
 class SensorManagerCommandMessage final: public ::EmbeddedProto::MessageInterface
@@ -434,11 +434,13 @@ class AssignSensorCommand final: public ::EmbeddedProto::MessageInterface
     AssignSensorCommand() = default;
     AssignSensorCommand(const AssignSensorCommand& rhs )
     {
+      set_role(rhs.get_role());
       set_sensor(rhs.get_sensor());
     }
 
     AssignSensorCommand(const AssignSensorCommand&& rhs ) noexcept
     {
+      set_role(rhs.get_role());
       set_sensor(rhs.get_sensor());
     }
 
@@ -447,20 +449,29 @@ class AssignSensorCommand final: public ::EmbeddedProto::MessageInterface
     enum class id : uint32_t
     {
       NOT_SET = 0,
-      SENSOR = 1
+      ROLE = 1,
+      SENSOR = 2
     };
 
     AssignSensorCommand& operator=(const AssignSensorCommand& rhs)
     {
+      set_role(rhs.get_role());
       set_sensor(rhs.get_sensor());
       return *this;
     }
 
     AssignSensorCommand& operator=(const AssignSensorCommand&& rhs) noexcept
     {
+      set_role(rhs.get_role());
       set_sensor(rhs.get_sensor());
       return *this;
     }
+
+    inline void clear_role() { role_ = static_cast<DS18B20Role>(0); }
+    inline void set_role(const DS18B20Role& value) { role_ = value; }
+    inline void set_role(const DS18B20Role&& value) { role_ = value; }
+    inline const DS18B20Role& get_role() const { return role_; }
+    inline DS18B20Role role() const { return role_; }
 
     inline void clear_sensor() { sensor_.clear(); }
     inline void set_sensor(const DS18B20Sensor<sensor_romCode_LENGTH>& value) { sensor_ = value; }
@@ -473,6 +484,13 @@ class AssignSensorCommand final: public ::EmbeddedProto::MessageInterface
     ::EmbeddedProto::Error serialize(::EmbeddedProto::WriteBufferInterface& buffer) const override
     {
       ::EmbeddedProto::Error return_value = ::EmbeddedProto::Error::NO_ERRORS;
+
+      if((static_cast<DS18B20Role>(0) != role_) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
+      {
+        EmbeddedProto::uint32 value = 0;
+        value.set(static_cast<uint32_t>(role_));
+        return_value = value.serialize_with_id(static_cast<uint32_t>(id::ROLE), buffer);
+      }
 
       if(::EmbeddedProto::Error::NO_ERRORS == return_value)
       {
@@ -495,6 +513,23 @@ class AssignSensorCommand final: public ::EmbeddedProto::MessageInterface
         id_tag = static_cast<id>(id_number);
         switch(id_tag)
         {
+          case id::ROLE:
+            if(::EmbeddedProto::WireFormatter::WireType::VARINT == wire_type)
+            {
+              uint32_t value = 0;
+              return_value = ::EmbeddedProto::WireFormatter::DeserializeVarint(buffer, value);
+              if(::EmbeddedProto::Error::NO_ERRORS == return_value)
+              {
+                set_role(static_cast<DS18B20Role>(value));
+              }
+            }
+            else
+            {
+              // Wire type does not match field.
+              return_value = ::EmbeddedProto::Error::INVALID_WIRETYPE;
+            }
+            break;
+
           case id::SENSOR:
             return_value = sensor_.deserialize_check_type(buffer, wire_type);
             break;
@@ -523,12 +558,14 @@ class AssignSensorCommand final: public ::EmbeddedProto::MessageInterface
 
     void clear() override
     {
+      clear_role();
       clear_sensor();
 
     }
 
     private:
 
+      DS18B20Role role_ = static_cast<DS18B20Role>(0);
       DS18B20Sensor<sensor_romCode_LENGTH> sensor_;
 
 };

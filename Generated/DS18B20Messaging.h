@@ -62,7 +62,6 @@ class DS18B20Sensor final: public ::EmbeddedProto::MessageInterface
     DS18B20Sensor() = default;
     DS18B20Sensor(const DS18B20Sensor& rhs )
     {
-      set_role(rhs.get_role());
       set_romCode(rhs.get_romCode());
       set_calibLinear(rhs.get_calibLinear());
       set_calibOffset(rhs.get_calibOffset());
@@ -70,7 +69,6 @@ class DS18B20Sensor final: public ::EmbeddedProto::MessageInterface
 
     DS18B20Sensor(const DS18B20Sensor&& rhs ) noexcept
     {
-      set_role(rhs.get_role());
       set_romCode(rhs.get_romCode());
       set_calibLinear(rhs.get_calibLinear());
       set_calibOffset(rhs.get_calibOffset());
@@ -81,15 +79,13 @@ class DS18B20Sensor final: public ::EmbeddedProto::MessageInterface
     enum class id : uint32_t
     {
       NOT_SET = 0,
-      ROLE = 1,
-      ROMCODE = 2,
-      CALIBLINEAR = 3,
-      CALIBOFFSET = 4
+      ROMCODE = 1,
+      CALIBLINEAR = 2,
+      CALIBOFFSET = 3
     };
 
     DS18B20Sensor& operator=(const DS18B20Sensor& rhs)
     {
-      set_role(rhs.get_role());
       set_romCode(rhs.get_romCode());
       set_calibLinear(rhs.get_calibLinear());
       set_calibOffset(rhs.get_calibOffset());
@@ -98,18 +94,11 @@ class DS18B20Sensor final: public ::EmbeddedProto::MessageInterface
 
     DS18B20Sensor& operator=(const DS18B20Sensor&& rhs) noexcept
     {
-      set_role(rhs.get_role());
       set_romCode(rhs.get_romCode());
       set_calibLinear(rhs.get_calibLinear());
       set_calibOffset(rhs.get_calibOffset());
       return *this;
     }
-
-    inline void clear_role() { role_ = static_cast<DS18B20Role>(0); }
-    inline void set_role(const DS18B20Role& value) { role_ = value; }
-    inline void set_role(const DS18B20Role&& value) { role_ = value; }
-    inline const DS18B20Role& get_role() const { return role_; }
-    inline DS18B20Role role() const { return role_; }
 
     inline void clear_romCode() { romCode_.clear(); }
     inline ::EmbeddedProto::FieldBytes<romCode_LENGTH>& mutable_romCode() { return romCode_; }
@@ -135,13 +124,6 @@ class DS18B20Sensor final: public ::EmbeddedProto::MessageInterface
     ::EmbeddedProto::Error serialize(::EmbeddedProto::WriteBufferInterface& buffer) const override
     {
       ::EmbeddedProto::Error return_value = ::EmbeddedProto::Error::NO_ERRORS;
-
-      if((static_cast<DS18B20Role>(0) != role_) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
-      {
-        EmbeddedProto::uint32 value = 0;
-        value.set(static_cast<uint32_t>(role_));
-        return_value = value.serialize_with_id(static_cast<uint32_t>(id::ROLE), buffer);
-      }
 
       if(::EmbeddedProto::Error::NO_ERRORS == return_value)
       {
@@ -174,23 +156,6 @@ class DS18B20Sensor final: public ::EmbeddedProto::MessageInterface
         id_tag = static_cast<id>(id_number);
         switch(id_tag)
         {
-          case id::ROLE:
-            if(::EmbeddedProto::WireFormatter::WireType::VARINT == wire_type)
-            {
-              uint32_t value = 0;
-              return_value = ::EmbeddedProto::WireFormatter::DeserializeVarint(buffer, value);
-              if(::EmbeddedProto::Error::NO_ERRORS == return_value)
-              {
-                set_role(static_cast<DS18B20Role>(value));
-              }
-            }
-            else
-            {
-              // Wire type does not match field.
-              return_value = ::EmbeddedProto::Error::INVALID_WIRETYPE;
-            }
-            break;
-
           case id::ROMCODE:
             return_value = romCode_.deserialize_check_type(buffer, wire_type);
             break;
@@ -227,7 +192,6 @@ class DS18B20Sensor final: public ::EmbeddedProto::MessageInterface
 
     void clear() override
     {
-      clear_role();
       clear_romCode();
       clear_calibLinear();
       clear_calibOffset();
@@ -236,7 +200,6 @@ class DS18B20Sensor final: public ::EmbeddedProto::MessageInterface
 
     private:
 
-      DS18B20Role role_ = static_cast<DS18B20Role>(0);
       ::EmbeddedProto::FieldBytes<romCode_LENGTH> romCode_;
       EmbeddedProto::doublefixed calibLinear_ = 0.0;
       EmbeddedProto::doublefixed calibOffset_ = 0.0;

@@ -10,8 +10,7 @@ enum DS18B20Role {
 }
 
 message DS18B20Sensor {
-    DS18B20Role role = 1;
-    bytes romCode = 2;
-    double calibLinear = 3;
-    double calibOffset = 4;
+    bytes romCode = 1;
+    double calibLinear = 2;
+    double calibOffset = 3;
 }

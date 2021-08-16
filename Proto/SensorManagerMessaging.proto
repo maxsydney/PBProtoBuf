@@ -3,7 +3,7 @@ import 'DS18B20Messaging.proto';
 
 enum SensorManagerCmdType {
     CMD_NONE = 0;
-    CMD_BROADCAST_SENSORS = 2;
+    CMD_BROADCAST_SENSORS = 1;
 }
 
 message SensorManagerCommandMessage {
@@ -21,7 +21,8 @@ message ConcentrationData {
 }
 
 message AssignSensorCommand {
-    DS18B20Sensor sensor = 1;
+    DS18B20Role role = 1;
+    DS18B20Sensor sensor = 2;
 }
 
 message TemperatureData {
