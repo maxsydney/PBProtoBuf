@@ -22,7 +22,7 @@ message ConcentrationData {
 
 message AssignSensorCommand {
     DS18B20Role role = 1;
-    DS18B20Sensor sensor = 2;
+    bytes address = 2;
 }
 
 message TemperatureData {

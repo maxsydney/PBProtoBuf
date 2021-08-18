@@ -427,7 +427,7 @@ class ConcentrationData final: public ::EmbeddedProto::MessageInterface
 
 };
 
-template<uint32_t sensor_romCode_LENGTH>
+template<uint32_t address_LENGTH>
 class AssignSensorCommand final: public ::EmbeddedProto::MessageInterface
 {
   public:
@@ -435,13 +435,13 @@ class AssignSensorCommand final: public ::EmbeddedProto::MessageInterface
     AssignSensorCommand(const AssignSensorCommand& rhs )
     {
       set_role(rhs.get_role());
-      set_sensor(rhs.get_sensor());
+      set_address(rhs.get_address());
     }
 
     AssignSensorCommand(const AssignSensorCommand&& rhs ) noexcept
     {
       set_role(rhs.get_role());
-      set_sensor(rhs.get_sensor());
+      set_address(rhs.get_address());
     }
 
     ~AssignSensorCommand() override = default;
@@ -450,20 +450,20 @@ class AssignSensorCommand final: public ::EmbeddedProto::MessageInterface
     {
       NOT_SET = 0,
       ROLE = 1,
-      SENSOR = 2
+      ADDRESS = 2
     };
 
     AssignSensorCommand& operator=(const AssignSensorCommand& rhs)
     {
       set_role(rhs.get_role());
-      set_sensor(rhs.get_sensor());
+      set_address(rhs.get_address());
       return *this;
     }
 
     AssignSensorCommand& operator=(const AssignSensorCommand&& rhs) noexcept
     {
       set_role(rhs.get_role());
-      set_sensor(rhs.get_sensor());
+      set_address(rhs.get_address());
       return *this;
     }
 
@@ -473,12 +473,11 @@ class AssignSensorCommand final: public ::EmbeddedProto::MessageInterface
     inline const DS18B20Role& get_role() const { return role_; }
     inline DS18B20Role role() const { return role_; }
 
-    inline void clear_sensor() { sensor_.clear(); }
-    inline void set_sensor(const DS18B20Sensor<sensor_romCode_LENGTH>& value) { sensor_ = value; }
-    inline void set_sensor(const DS18B20Sensor<sensor_romCode_LENGTH>&& value) { sensor_ = value; }
-    inline DS18B20Sensor<sensor_romCode_LENGTH>& mutable_sensor() { return sensor_; }
-    inline const DS18B20Sensor<sensor_romCode_LENGTH>& get_sensor() const { return sensor_; }
-    inline const DS18B20Sensor<sensor_romCode_LENGTH>& sensor() const { return sensor_; }
+    inline void clear_address() { address_.clear(); }
+    inline ::EmbeddedProto::FieldBytes<address_LENGTH>& mutable_address() { return address_; }
+    inline void set_address(const ::EmbeddedProto::FieldBytes<address_LENGTH>& rhs) { address_.set(rhs); }
+    inline const ::EmbeddedProto::FieldBytes<address_LENGTH>& get_address() const { return address_; }
+    inline const uint8_t* address() const { return address_.get_const(); }
 
 
     ::EmbeddedProto::Error serialize(::EmbeddedProto::WriteBufferInterface& buffer) const override
@@ -494,7 +493,7 @@ class AssignSensorCommand final: public ::EmbeddedProto::MessageInterface
 
       if(::EmbeddedProto::Error::NO_ERRORS == return_value)
       {
-        return_value = sensor_.serialize_with_id(static_cast<uint32_t>(id::SENSOR), buffer);
+        return_value = address_.serialize_with_id(static_cast<uint32_t>(id::ADDRESS), buffer);
       }
 
       return return_value;
@@ -530,8 +529,8 @@ class AssignSensorCommand final: public ::EmbeddedProto::MessageInterface
             }
             break;
 
-          case id::SENSOR:
-            return_value = sensor_.deserialize_check_type(buffer, wire_type);
+          case id::ADDRESS:
+            return_value = address_.deserialize_check_type(buffer, wire_type);
             break;
 
           default:
@@ -559,14 +558,14 @@ class AssignSensorCommand final: public ::EmbeddedProto::MessageInterface
     void clear() override
     {
       clear_role();
-      clear_sensor();
+      clear_address();
 
     }
 
     private:
 
       DS18B20Role role_ = static_cast<DS18B20Role>(0);
-      DS18B20Sensor<sensor_romCode_LENGTH> sensor_;
+      ::EmbeddedProto::FieldBytes<address_LENGTH> address_;
 
 };
 
