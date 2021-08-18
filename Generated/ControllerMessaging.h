@@ -570,134 +570,6 @@ class ControllerState final: public ::EmbeddedProto::MessageInterface
 
 };
 
-class IIRLowpassFilterTuning final: public ::EmbeddedProto::MessageInterface
-{
-  public:
-    IIRLowpassFilterTuning() = default;
-    IIRLowpassFilterTuning(const IIRLowpassFilterTuning& rhs )
-    {
-      set_sampleFreq(rhs.get_sampleFreq());
-      set_cutoffFreq(rhs.get_cutoffFreq());
-    }
-
-    IIRLowpassFilterTuning(const IIRLowpassFilterTuning&& rhs ) noexcept
-    {
-      set_sampleFreq(rhs.get_sampleFreq());
-      set_cutoffFreq(rhs.get_cutoffFreq());
-    }
-
-    ~IIRLowpassFilterTuning() override = default;
-
-    enum class id : uint32_t
-    {
-      NOT_SET = 0,
-      SAMPLEFREQ = 1,
-      CUTOFFFREQ = 2
-    };
-
-    IIRLowpassFilterTuning& operator=(const IIRLowpassFilterTuning& rhs)
-    {
-      set_sampleFreq(rhs.get_sampleFreq());
-      set_cutoffFreq(rhs.get_cutoffFreq());
-      return *this;
-    }
-
-    IIRLowpassFilterTuning& operator=(const IIRLowpassFilterTuning&& rhs) noexcept
-    {
-      set_sampleFreq(rhs.get_sampleFreq());
-      set_cutoffFreq(rhs.get_cutoffFreq());
-      return *this;
-    }
-
-    inline void clear_sampleFreq() { sampleFreq_.clear(); }
-    inline void set_sampleFreq(const EmbeddedProto::doublefixed& value) { sampleFreq_ = value; }
-    inline void set_sampleFreq(const EmbeddedProto::doublefixed&& value) { sampleFreq_ = value; }
-    inline EmbeddedProto::doublefixed& mutable_sampleFreq() { return sampleFreq_; }
-    inline const EmbeddedProto::doublefixed& get_sampleFreq() const { return sampleFreq_; }
-    inline EmbeddedProto::doublefixed::FIELD_TYPE sampleFreq() const { return sampleFreq_.get(); }
-
-    inline void clear_cutoffFreq() { cutoffFreq_.clear(); }
-    inline void set_cutoffFreq(const EmbeddedProto::doublefixed& value) { cutoffFreq_ = value; }
-    inline void set_cutoffFreq(const EmbeddedProto::doublefixed&& value) { cutoffFreq_ = value; }
-    inline EmbeddedProto::doublefixed& mutable_cutoffFreq() { return cutoffFreq_; }
-    inline const EmbeddedProto::doublefixed& get_cutoffFreq() const { return cutoffFreq_; }
-    inline EmbeddedProto::doublefixed::FIELD_TYPE cutoffFreq() const { return cutoffFreq_.get(); }
-
-
-    ::EmbeddedProto::Error serialize(::EmbeddedProto::WriteBufferInterface& buffer) const override
-    {
-      ::EmbeddedProto::Error return_value = ::EmbeddedProto::Error::NO_ERRORS;
-
-      if((0.0 != sampleFreq_.get()) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
-      {
-        return_value = sampleFreq_.serialize_with_id(static_cast<uint32_t>(id::SAMPLEFREQ), buffer);
-      }
-
-      if((0.0 != cutoffFreq_.get()) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
-      {
-        return_value = cutoffFreq_.serialize_with_id(static_cast<uint32_t>(id::CUTOFFFREQ), buffer);
-      }
-
-      return return_value;
-    };
-
-    ::EmbeddedProto::Error deserialize(::EmbeddedProto::ReadBufferInterface& buffer) override
-    {
-      ::EmbeddedProto::Error return_value = ::EmbeddedProto::Error::NO_ERRORS;
-      ::EmbeddedProto::WireFormatter::WireType wire_type = ::EmbeddedProto::WireFormatter::WireType::VARINT;
-      uint32_t id_number = 0;
-      id id_tag = id::NOT_SET;
-
-      ::EmbeddedProto::Error tag_value = ::EmbeddedProto::WireFormatter::DeserializeTag(buffer, wire_type, id_number);
-      while((::EmbeddedProto::Error::NO_ERRORS == return_value) && (::EmbeddedProto::Error::NO_ERRORS == tag_value))
-      {
-        id_tag = static_cast<id>(id_number);
-        switch(id_tag)
-        {
-          case id::SAMPLEFREQ:
-            return_value = sampleFreq_.deserialize_check_type(buffer, wire_type);
-            break;
-
-          case id::CUTOFFFREQ:
-            return_value = cutoffFreq_.deserialize_check_type(buffer, wire_type);
-            break;
-
-          default:
-            break;
-        }
-
-        if(::EmbeddedProto::Error::NO_ERRORS == return_value)
-        {
-          // Read the next tag.
-          tag_value = ::EmbeddedProto::WireFormatter::DeserializeTag(buffer, wire_type, id_number);
-        }
-      }
-
-      // When an error was detect while reading the tag but no other errors where found, set it in the return value.
-      if((::EmbeddedProto::Error::NO_ERRORS == return_value)
-         && (::EmbeddedProto::Error::NO_ERRORS != tag_value)
-         && (::EmbeddedProto::Error::END_OF_BUFFER != tag_value)) // The end of the buffer is not an array in this case.
-      {
-        return_value = tag_value;
-      }
-
-      return return_value;
-    };
-
-    void clear() override
-    {
-      clear_sampleFreq();
-      clear_cutoffFreq();
-
-    }
-
-    private:
-
-      EmbeddedProto::doublefixed sampleFreq_ = 0.0;
-      EmbeddedProto::doublefixed cutoffFreq_ = 0.0;
-
-};
-
 class ControllerTuning final: public ::EmbeddedProto::MessageInterface
 {
   public:
@@ -708,6 +580,8 @@ class ControllerTuning final: public ::EmbeddedProto::MessageInterface
       set_PGain(rhs.get_PGain());
       set_IGain(rhs.get_IGain());
       set_DGain(rhs.get_DGain());
+      set_LPFsampleFreq(rhs.get_LPFsampleFreq());
+      set_LPFcutoffFreq(rhs.get_LPFcutoffFreq());
     }
 
     ControllerTuning(const ControllerTuning&& rhs ) noexcept
@@ -716,6 +590,8 @@ class ControllerTuning final: public ::EmbeddedProto::MessageInterface
       set_PGain(rhs.get_PGain());
       set_IGain(rhs.get_IGain());
       set_DGain(rhs.get_DGain());
+      set_LPFsampleFreq(rhs.get_LPFsampleFreq());
+      set_LPFcutoffFreq(rhs.get_LPFcutoffFreq());
     }
 
     ~ControllerTuning() override = default;
@@ -726,7 +602,9 @@ class ControllerTuning final: public ::EmbeddedProto::MessageInterface
       SETPOINT = 1,
       PGAIN = 2,
       IGAIN = 3,
-      DGAIN = 4
+      DGAIN = 4,
+      LPFSAMPLEFREQ = 5,
+      LPFCUTOFFFREQ = 6
     };
 
     ControllerTuning& operator=(const ControllerTuning& rhs)
@@ -735,6 +613,8 @@ class ControllerTuning final: public ::EmbeddedProto::MessageInterface
       set_PGain(rhs.get_PGain());
       set_IGain(rhs.get_IGain());
       set_DGain(rhs.get_DGain());
+      set_LPFsampleFreq(rhs.get_LPFsampleFreq());
+      set_LPFcutoffFreq(rhs.get_LPFcutoffFreq());
       return *this;
     }
 
@@ -744,6 +624,8 @@ class ControllerTuning final: public ::EmbeddedProto::MessageInterface
       set_PGain(rhs.get_PGain());
       set_IGain(rhs.get_IGain());
       set_DGain(rhs.get_DGain());
+      set_LPFsampleFreq(rhs.get_LPFsampleFreq());
+      set_LPFcutoffFreq(rhs.get_LPFcutoffFreq());
       return *this;
     }
 
@@ -775,6 +657,20 @@ class ControllerTuning final: public ::EmbeddedProto::MessageInterface
     inline const EmbeddedProto::doublefixed& get_DGain() const { return DGain_; }
     inline EmbeddedProto::doublefixed::FIELD_TYPE DGain() const { return DGain_.get(); }
 
+    inline void clear_LPFsampleFreq() { LPFsampleFreq_.clear(); }
+    inline void set_LPFsampleFreq(const EmbeddedProto::doublefixed& value) { LPFsampleFreq_ = value; }
+    inline void set_LPFsampleFreq(const EmbeddedProto::doublefixed&& value) { LPFsampleFreq_ = value; }
+    inline EmbeddedProto::doublefixed& mutable_LPFsampleFreq() { return LPFsampleFreq_; }
+    inline const EmbeddedProto::doublefixed& get_LPFsampleFreq() const { return LPFsampleFreq_; }
+    inline EmbeddedProto::doublefixed::FIELD_TYPE LPFsampleFreq() const { return LPFsampleFreq_.get(); }
+
+    inline void clear_LPFcutoffFreq() { LPFcutoffFreq_.clear(); }
+    inline void set_LPFcutoffFreq(const EmbeddedProto::doublefixed& value) { LPFcutoffFreq_ = value; }
+    inline void set_LPFcutoffFreq(const EmbeddedProto::doublefixed&& value) { LPFcutoffFreq_ = value; }
+    inline EmbeddedProto::doublefixed& mutable_LPFcutoffFreq() { return LPFcutoffFreq_; }
+    inline const EmbeddedProto::doublefixed& get_LPFcutoffFreq() const { return LPFcutoffFreq_; }
+    inline EmbeddedProto::doublefixed::FIELD_TYPE LPFcutoffFreq() const { return LPFcutoffFreq_.get(); }
+
 
     ::EmbeddedProto::Error serialize(::EmbeddedProto::WriteBufferInterface& buffer) const override
     {
@@ -798,6 +694,16 @@ class ControllerTuning final: public ::EmbeddedProto::MessageInterface
       if((0.0 != DGain_.get()) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
       {
         return_value = DGain_.serialize_with_id(static_cast<uint32_t>(id::DGAIN), buffer);
+      }
+
+      if((0.0 != LPFsampleFreq_.get()) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
+      {
+        return_value = LPFsampleFreq_.serialize_with_id(static_cast<uint32_t>(id::LPFSAMPLEFREQ), buffer);
+      }
+
+      if((0.0 != LPFcutoffFreq_.get()) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
+      {
+        return_value = LPFcutoffFreq_.serialize_with_id(static_cast<uint32_t>(id::LPFCUTOFFFREQ), buffer);
       }
 
       return return_value;
@@ -832,6 +738,14 @@ class ControllerTuning final: public ::EmbeddedProto::MessageInterface
             return_value = DGain_.deserialize_check_type(buffer, wire_type);
             break;
 
+          case id::LPFSAMPLEFREQ:
+            return_value = LPFsampleFreq_.deserialize_check_type(buffer, wire_type);
+            break;
+
+          case id::LPFCUTOFFFREQ:
+            return_value = LPFcutoffFreq_.deserialize_check_type(buffer, wire_type);
+            break;
+
           default:
             break;
         }
@@ -860,6 +774,8 @@ class ControllerTuning final: public ::EmbeddedProto::MessageInterface
       clear_PGain();
       clear_IGain();
       clear_DGain();
+      clear_LPFsampleFreq();
+      clear_LPFcutoffFreq();
 
     }
 
@@ -869,6 +785,8 @@ class ControllerTuning final: public ::EmbeddedProto::MessageInterface
       EmbeddedProto::doublefixed PGain_ = 0.0;
       EmbeddedProto::doublefixed IGain_ = 0.0;
       EmbeddedProto::doublefixed DGain_ = 0.0;
+      EmbeddedProto::doublefixed LPFsampleFreq_ = 0.0;
+      EmbeddedProto::doublefixed LPFcutoffFreq_ = 0.0;
 
 };
 

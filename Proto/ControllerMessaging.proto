@@ -37,16 +37,13 @@ message ControllerState {
     uint32 timeStamp = 5;
 }
 
-message IIRLowpassFilterTuning {
-  double sampleFreq = 1;
-  double cutoffFreq = 2;
-}
-
 message ControllerTuning {
   double setpoint = 1;
   double PGain = 2;
   double IGain = 3;
   double DGain = 4;
+  double LPFsampleFreq = 5;
+  double LPFcutoffFreq = 6;
 }
 
 message ControllerCommand {
