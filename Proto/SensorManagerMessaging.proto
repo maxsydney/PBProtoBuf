@@ -35,5 +35,13 @@ message TemperatureData {
 }
 
 message DeviceData {
-    repeated DS18B20Sensor sensors = 1;
+    repeated bytes addresses = 1;
+}
+
+message AssignedSensorRegistry {
+    DS18B20Sensor headTempSensor = 1;
+    DS18B20Sensor refluxTempSensor = 2;
+    DS18B20Sensor productTempSensor = 3;
+    DS18B20Sensor radiatorTempSensor = 4;
+    DS18B20Sensor boilerTempSensor = 5;
 }

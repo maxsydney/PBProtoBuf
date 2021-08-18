@@ -790,20 +790,20 @@ class TemperatureData final: public ::EmbeddedProto::MessageInterface
 
 };
 
-template<uint32_t sensors_REP_LENGTH, 
-uint32_t sensors_romCode_LENGTH>
+template<uint32_t addresses_REP_LENGTH, 
+uint32_t addresses_LENGTH>
 class DeviceData final: public ::EmbeddedProto::MessageInterface
 {
   public:
     DeviceData() = default;
     DeviceData(const DeviceData& rhs )
     {
-      set_sensors(rhs.get_sensors());
+      set_addresses(rhs.get_addresses());
     }
 
     DeviceData(const DeviceData&& rhs ) noexcept
     {
-      set_sensors(rhs.get_sensors());
+      set_addresses(rhs.get_addresses());
     }
 
     ~DeviceData() override = default;
@@ -811,31 +811,31 @@ class DeviceData final: public ::EmbeddedProto::MessageInterface
     enum class id : uint32_t
     {
       NOT_SET = 0,
-      SENSORS = 1
+      ADDRESSES = 1
     };
 
     DeviceData& operator=(const DeviceData& rhs)
     {
-      set_sensors(rhs.get_sensors());
+      set_addresses(rhs.get_addresses());
       return *this;
     }
 
     DeviceData& operator=(const DeviceData&& rhs) noexcept
     {
-      set_sensors(rhs.get_sensors());
+      set_addresses(rhs.get_addresses());
       return *this;
     }
 
-    inline const DS18B20Sensor<sensors_romCode_LENGTH>& sensors(uint32_t index) const { return sensors_[index]; }
-    inline void clear_sensors() { sensors_.clear(); }
-    inline void set_sensors(uint32_t index, const DS18B20Sensor<sensors_romCode_LENGTH>& value) { sensors_.set(index, value); }
-    inline void set_sensors(uint32_t index, const DS18B20Sensor<sensors_romCode_LENGTH>&& value) { sensors_.set(index, value); }
-    inline void set_sensors(const ::EmbeddedProto::RepeatedFieldFixedSize<DS18B20Sensor<sensors_romCode_LENGTH>, sensors_REP_LENGTH>& values) { sensors_ = values; }
-    inline void add_sensors(const DS18B20Sensor<sensors_romCode_LENGTH>& value) { sensors_.add(value); }
-    inline ::EmbeddedProto::RepeatedFieldFixedSize<DS18B20Sensor<sensors_romCode_LENGTH>, sensors_REP_LENGTH>& mutable_sensors() { return sensors_; }
-    inline DS18B20Sensor<sensors_romCode_LENGTH>& mutable_sensors(uint32_t index) { return sensors_[index]; }
-    inline const ::EmbeddedProto::RepeatedFieldFixedSize<DS18B20Sensor<sensors_romCode_LENGTH>, sensors_REP_LENGTH>& get_sensors() const { return sensors_; }
-    inline const ::EmbeddedProto::RepeatedFieldFixedSize<DS18B20Sensor<sensors_romCode_LENGTH>, sensors_REP_LENGTH>& sensors() const { return sensors_; }
+    inline const ::EmbeddedProto::FieldBytes<addresses_LENGTH>& addresses(uint32_t index) const { return addresses_[index]; }
+    inline void clear_addresses() { addresses_.clear(); }
+    inline void set_addresses(uint32_t index, const ::EmbeddedProto::FieldBytes<addresses_LENGTH>& value) { addresses_.set(index, value); }
+    inline void set_addresses(uint32_t index, const ::EmbeddedProto::FieldBytes<addresses_LENGTH>&& value) { addresses_.set(index, value); }
+    inline void set_addresses(const ::EmbeddedProto::RepeatedFieldFixedSize<::EmbeddedProto::FieldBytes<addresses_LENGTH>, addresses_REP_LENGTH>& values) { addresses_ = values; }
+    inline void add_addresses(const ::EmbeddedProto::FieldBytes<addresses_LENGTH>& value) { addresses_.add(value); }
+    inline ::EmbeddedProto::RepeatedFieldFixedSize<::EmbeddedProto::FieldBytes<addresses_LENGTH>, addresses_REP_LENGTH>& mutable_addresses() { return addresses_; }
+    inline ::EmbeddedProto::FieldBytes<addresses_LENGTH>& mutable_addresses(uint32_t index) { return addresses_[index]; }
+    inline const ::EmbeddedProto::RepeatedFieldFixedSize<::EmbeddedProto::FieldBytes<addresses_LENGTH>, addresses_REP_LENGTH>& get_addresses() const { return addresses_; }
+    inline const ::EmbeddedProto::RepeatedFieldFixedSize<::EmbeddedProto::FieldBytes<addresses_LENGTH>, addresses_REP_LENGTH>& addresses() const { return addresses_; }
 
 
     ::EmbeddedProto::Error serialize(::EmbeddedProto::WriteBufferInterface& buffer) const override
@@ -844,7 +844,7 @@ class DeviceData final: public ::EmbeddedProto::MessageInterface
 
       if(::EmbeddedProto::Error::NO_ERRORS == return_value)
       {
-        return_value = sensors_.serialize_with_id(static_cast<uint32_t>(id::SENSORS), buffer);
+        return_value = addresses_.serialize_with_id(static_cast<uint32_t>(id::ADDRESSES), buffer);
       }
 
       return return_value;
@@ -863,8 +863,8 @@ class DeviceData final: public ::EmbeddedProto::MessageInterface
         id_tag = static_cast<id>(id_number);
         switch(id_tag)
         {
-          case id::SENSORS:
-            return_value = sensors_.deserialize_check_type(buffer, wire_type);
+          case id::ADDRESSES:
+            return_value = addresses_.deserialize_check_type(buffer, wire_type);
             break;
 
           default:
@@ -891,13 +891,215 @@ class DeviceData final: public ::EmbeddedProto::MessageInterface
 
     void clear() override
     {
-      clear_sensors();
+      clear_addresses();
 
     }
 
     private:
 
-      ::EmbeddedProto::RepeatedFieldFixedSize<DS18B20Sensor<sensors_romCode_LENGTH>, sensors_REP_LENGTH> sensors_;
+      ::EmbeddedProto::RepeatedFieldFixedSize<::EmbeddedProto::FieldBytes<addresses_LENGTH>, addresses_REP_LENGTH> addresses_;
+
+};
+
+template<uint32_t headTempSensor_romCode_LENGTH, 
+uint32_t refluxTempSensor_romCode_LENGTH, 
+uint32_t productTempSensor_romCode_LENGTH, 
+uint32_t radiatorTempSensor_romCode_LENGTH, 
+uint32_t boilerTempSensor_romCode_LENGTH>
+class AssignedSensorRegistry final: public ::EmbeddedProto::MessageInterface
+{
+  public:
+    AssignedSensorRegistry() = default;
+    AssignedSensorRegistry(const AssignedSensorRegistry& rhs )
+    {
+      set_headTempSensor(rhs.get_headTempSensor());
+      set_refluxTempSensor(rhs.get_refluxTempSensor());
+      set_productTempSensor(rhs.get_productTempSensor());
+      set_radiatorTempSensor(rhs.get_radiatorTempSensor());
+      set_boilerTempSensor(rhs.get_boilerTempSensor());
+    }
+
+    AssignedSensorRegistry(const AssignedSensorRegistry&& rhs ) noexcept
+    {
+      set_headTempSensor(rhs.get_headTempSensor());
+      set_refluxTempSensor(rhs.get_refluxTempSensor());
+      set_productTempSensor(rhs.get_productTempSensor());
+      set_radiatorTempSensor(rhs.get_radiatorTempSensor());
+      set_boilerTempSensor(rhs.get_boilerTempSensor());
+    }
+
+    ~AssignedSensorRegistry() override = default;
+
+    enum class id : uint32_t
+    {
+      NOT_SET = 0,
+      HEADTEMPSENSOR = 1,
+      REFLUXTEMPSENSOR = 2,
+      PRODUCTTEMPSENSOR = 3,
+      RADIATORTEMPSENSOR = 4,
+      BOILERTEMPSENSOR = 5
+    };
+
+    AssignedSensorRegistry& operator=(const AssignedSensorRegistry& rhs)
+    {
+      set_headTempSensor(rhs.get_headTempSensor());
+      set_refluxTempSensor(rhs.get_refluxTempSensor());
+      set_productTempSensor(rhs.get_productTempSensor());
+      set_radiatorTempSensor(rhs.get_radiatorTempSensor());
+      set_boilerTempSensor(rhs.get_boilerTempSensor());
+      return *this;
+    }
+
+    AssignedSensorRegistry& operator=(const AssignedSensorRegistry&& rhs) noexcept
+    {
+      set_headTempSensor(rhs.get_headTempSensor());
+      set_refluxTempSensor(rhs.get_refluxTempSensor());
+      set_productTempSensor(rhs.get_productTempSensor());
+      set_radiatorTempSensor(rhs.get_radiatorTempSensor());
+      set_boilerTempSensor(rhs.get_boilerTempSensor());
+      return *this;
+    }
+
+    inline void clear_headTempSensor() { headTempSensor_.clear(); }
+    inline void set_headTempSensor(const DS18B20Sensor<headTempSensor_romCode_LENGTH>& value) { headTempSensor_ = value; }
+    inline void set_headTempSensor(const DS18B20Sensor<headTempSensor_romCode_LENGTH>&& value) { headTempSensor_ = value; }
+    inline DS18B20Sensor<headTempSensor_romCode_LENGTH>& mutable_headTempSensor() { return headTempSensor_; }
+    inline const DS18B20Sensor<headTempSensor_romCode_LENGTH>& get_headTempSensor() const { return headTempSensor_; }
+    inline const DS18B20Sensor<headTempSensor_romCode_LENGTH>& headTempSensor() const { return headTempSensor_; }
+
+    inline void clear_refluxTempSensor() { refluxTempSensor_.clear(); }
+    inline void set_refluxTempSensor(const DS18B20Sensor<refluxTempSensor_romCode_LENGTH>& value) { refluxTempSensor_ = value; }
+    inline void set_refluxTempSensor(const DS18B20Sensor<refluxTempSensor_romCode_LENGTH>&& value) { refluxTempSensor_ = value; }
+    inline DS18B20Sensor<refluxTempSensor_romCode_LENGTH>& mutable_refluxTempSensor() { return refluxTempSensor_; }
+    inline const DS18B20Sensor<refluxTempSensor_romCode_LENGTH>& get_refluxTempSensor() const { return refluxTempSensor_; }
+    inline const DS18B20Sensor<refluxTempSensor_romCode_LENGTH>& refluxTempSensor() const { return refluxTempSensor_; }
+
+    inline void clear_productTempSensor() { productTempSensor_.clear(); }
+    inline void set_productTempSensor(const DS18B20Sensor<productTempSensor_romCode_LENGTH>& value) { productTempSensor_ = value; }
+    inline void set_productTempSensor(const DS18B20Sensor<productTempSensor_romCode_LENGTH>&& value) { productTempSensor_ = value; }
+    inline DS18B20Sensor<productTempSensor_romCode_LENGTH>& mutable_productTempSensor() { return productTempSensor_; }
+    inline const DS18B20Sensor<productTempSensor_romCode_LENGTH>& get_productTempSensor() const { return productTempSensor_; }
+    inline const DS18B20Sensor<productTempSensor_romCode_LENGTH>& productTempSensor() const { return productTempSensor_; }
+
+    inline void clear_radiatorTempSensor() { radiatorTempSensor_.clear(); }
+    inline void set_radiatorTempSensor(const DS18B20Sensor<radiatorTempSensor_romCode_LENGTH>& value) { radiatorTempSensor_ = value; }
+    inline void set_radiatorTempSensor(const DS18B20Sensor<radiatorTempSensor_romCode_LENGTH>&& value) { radiatorTempSensor_ = value; }
+    inline DS18B20Sensor<radiatorTempSensor_romCode_LENGTH>& mutable_radiatorTempSensor() { return radiatorTempSensor_; }
+    inline const DS18B20Sensor<radiatorTempSensor_romCode_LENGTH>& get_radiatorTempSensor() const { return radiatorTempSensor_; }
+    inline const DS18B20Sensor<radiatorTempSensor_romCode_LENGTH>& radiatorTempSensor() const { return radiatorTempSensor_; }
+
+    inline void clear_boilerTempSensor() { boilerTempSensor_.clear(); }
+    inline void set_boilerTempSensor(const DS18B20Sensor<boilerTempSensor_romCode_LENGTH>& value) { boilerTempSensor_ = value; }
+    inline void set_boilerTempSensor(const DS18B20Sensor<boilerTempSensor_romCode_LENGTH>&& value) { boilerTempSensor_ = value; }
+    inline DS18B20Sensor<boilerTempSensor_romCode_LENGTH>& mutable_boilerTempSensor() { return boilerTempSensor_; }
+    inline const DS18B20Sensor<boilerTempSensor_romCode_LENGTH>& get_boilerTempSensor() const { return boilerTempSensor_; }
+    inline const DS18B20Sensor<boilerTempSensor_romCode_LENGTH>& boilerTempSensor() const { return boilerTempSensor_; }
+
+
+    ::EmbeddedProto::Error serialize(::EmbeddedProto::WriteBufferInterface& buffer) const override
+    {
+      ::EmbeddedProto::Error return_value = ::EmbeddedProto::Error::NO_ERRORS;
+
+      if(::EmbeddedProto::Error::NO_ERRORS == return_value)
+      {
+        return_value = headTempSensor_.serialize_with_id(static_cast<uint32_t>(id::HEADTEMPSENSOR), buffer);
+      }
+
+      if(::EmbeddedProto::Error::NO_ERRORS == return_value)
+      {
+        return_value = refluxTempSensor_.serialize_with_id(static_cast<uint32_t>(id::REFLUXTEMPSENSOR), buffer);
+      }
+
+      if(::EmbeddedProto::Error::NO_ERRORS == return_value)
+      {
+        return_value = productTempSensor_.serialize_with_id(static_cast<uint32_t>(id::PRODUCTTEMPSENSOR), buffer);
+      }
+
+      if(::EmbeddedProto::Error::NO_ERRORS == return_value)
+      {
+        return_value = radiatorTempSensor_.serialize_with_id(static_cast<uint32_t>(id::RADIATORTEMPSENSOR), buffer);
+      }
+
+      if(::EmbeddedProto::Error::NO_ERRORS == return_value)
+      {
+        return_value = boilerTempSensor_.serialize_with_id(static_cast<uint32_t>(id::BOILERTEMPSENSOR), buffer);
+      }
+
+      return return_value;
+    };
+
+    ::EmbeddedProto::Error deserialize(::EmbeddedProto::ReadBufferInterface& buffer) override
+    {
+      ::EmbeddedProto::Error return_value = ::EmbeddedProto::Error::NO_ERRORS;
+      ::EmbeddedProto::WireFormatter::WireType wire_type = ::EmbeddedProto::WireFormatter::WireType::VARINT;
+      uint32_t id_number = 0;
+      id id_tag = id::NOT_SET;
+
+      ::EmbeddedProto::Error tag_value = ::EmbeddedProto::WireFormatter::DeserializeTag(buffer, wire_type, id_number);
+      while((::EmbeddedProto::Error::NO_ERRORS == return_value) && (::EmbeddedProto::Error::NO_ERRORS == tag_value))
+      {
+        id_tag = static_cast<id>(id_number);
+        switch(id_tag)
+        {
+          case id::HEADTEMPSENSOR:
+            return_value = headTempSensor_.deserialize_check_type(buffer, wire_type);
+            break;
+
+          case id::REFLUXTEMPSENSOR:
+            return_value = refluxTempSensor_.deserialize_check_type(buffer, wire_type);
+            break;
+
+          case id::PRODUCTTEMPSENSOR:
+            return_value = productTempSensor_.deserialize_check_type(buffer, wire_type);
+            break;
+
+          case id::RADIATORTEMPSENSOR:
+            return_value = radiatorTempSensor_.deserialize_check_type(buffer, wire_type);
+            break;
+
+          case id::BOILERTEMPSENSOR:
+            return_value = boilerTempSensor_.deserialize_check_type(buffer, wire_type);
+            break;
+
+          default:
+            break;
+        }
+
+        if(::EmbeddedProto::Error::NO_ERRORS == return_value)
+        {
+          // Read the next tag.
+          tag_value = ::EmbeddedProto::WireFormatter::DeserializeTag(buffer, wire_type, id_number);
+        }
+      }
+
+      // When an error was detect while reading the tag but no other errors where found, set it in the return value.
+      if((::EmbeddedProto::Error::NO_ERRORS == return_value)
+         && (::EmbeddedProto::Error::NO_ERRORS != tag_value)
+         && (::EmbeddedProto::Error::END_OF_BUFFER != tag_value)) // The end of the buffer is not an array in this case.
+      {
+        return_value = tag_value;
+      }
+
+      return return_value;
+    };
+
+    void clear() override
+    {
+      clear_headTempSensor();
+      clear_refluxTempSensor();
+      clear_productTempSensor();
+      clear_radiatorTempSensor();
+      clear_boilerTempSensor();
+
+    }
+
+    private:
+
+      DS18B20Sensor<headTempSensor_romCode_LENGTH> headTempSensor_;
+      DS18B20Sensor<refluxTempSensor_romCode_LENGTH> refluxTempSensor_;
+      DS18B20Sensor<productTempSensor_romCode_LENGTH> productTempSensor_;
+      DS18B20Sensor<radiatorTempSensor_romCode_LENGTH> radiatorTempSensor_;
+      DS18B20Sensor<boilerTempSensor_romCode_LENGTH> boilerTempSensor_;
 
 };
 
