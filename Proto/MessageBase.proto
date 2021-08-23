@@ -17,7 +17,17 @@ enum PBMessageType {
   SocketLog = 13;
 }
 
+enum MessageOrigin {
+  OriginUnknown = 0;
+  DistillerManager = 1;
+  SensorManager = 2;
+  Controller = 3;
+  Webserver = 4;
+  Webclient = 5;
+}
+
 message MessageWrapper {
     PBMessageType type = 1;
+    MessageOrigin origin = 2;
     bytes payload = 3;
 }

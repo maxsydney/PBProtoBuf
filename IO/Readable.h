@@ -6,7 +6,7 @@
 class Readable : public ::EmbeddedProto::ReadBufferInterface
 {
     //! Store a maximum of MAX_SIZE bytes in the buffer
-    static constexpr uint32_t MAX_SIZE = 50;
+    static constexpr uint32_t MAX_SIZE = 128;
 
   public:
     Readable();
@@ -40,7 +40,7 @@ class Readable : public ::EmbeddedProto::ReadBufferInterface
     void clear();
 
     //! Push new data into the buffer.
-    bool push(uint8_t& byte);
+    bool push(const uint8_t& byte);
 
   private:
 

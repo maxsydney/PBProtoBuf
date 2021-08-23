@@ -63,6 +63,16 @@ enum class PBMessageType : uint32_t
   SocketLog = 13
 };
 
+enum class MessageOrigin : uint32_t
+{
+  OriginUnknown = 0,
+  DistillerManager = 1,
+  SensorManager = 2,
+  Controller = 3,
+  Webserver = 4,
+  Webclient = 5
+};
+
 template<uint32_t payload_LENGTH>
 class MessageWrapper final: public ::EmbeddedProto::MessageInterface
 {
@@ -71,12 +81,14 @@ class MessageWrapper final: public ::EmbeddedProto::MessageInterface
     MessageWrapper(const MessageWrapper& rhs )
     {
       set_type(rhs.get_type());
+      set_origin(rhs.get_origin());
       set_payload(rhs.get_payload());
     }
 
     MessageWrapper(const MessageWrapper&& rhs ) noexcept
     {
       set_type(rhs.get_type());
+      set_origin(rhs.get_origin());
       set_payload(rhs.get_payload());
     }
 
@@ -86,12 +98,14 @@ class MessageWrapper final: public ::EmbeddedProto::MessageInterface
     {
       NOT_SET = 0,
       TYPE = 1,
+      ORIGIN = 2,
       PAYLOAD = 3
     };
 
     MessageWrapper& operator=(const MessageWrapper& rhs)
     {
       set_type(rhs.get_type());
+      set_origin(rhs.get_origin());
       set_payload(rhs.get_payload());
       return *this;
     }
@@ -99,6 +113,7 @@ class MessageWrapper final: public ::EmbeddedProto::MessageInterface
     MessageWrapper& operator=(const MessageWrapper&& rhs) noexcept
     {
       set_type(rhs.get_type());
+      set_origin(rhs.get_origin());
       set_payload(rhs.get_payload());
       return *this;
     }
@@ -108,6 +123,12 @@ class MessageWrapper final: public ::EmbeddedProto::MessageInterface
     inline void set_type(const PBMessageType&& value) { type_ = value; }
     inline const PBMessageType& get_type() const { return type_; }
     inline PBMessageType type() const { return type_; }
+
+    inline void clear_origin() { origin_ = static_cast<MessageOrigin>(0); }
+    inline void set_origin(const MessageOrigin& value) { origin_ = value; }
+    inline void set_origin(const MessageOrigin&& value) { origin_ = value; }
+    inline const MessageOrigin& get_origin() const { return origin_; }
+    inline MessageOrigin origin() const { return origin_; }
 
     inline void clear_payload() { payload_.clear(); }
     inline ::EmbeddedProto::FieldBytes<payload_LENGTH>& mutable_payload() { return payload_; }
@@ -125,6 +146,13 @@ class MessageWrapper final: public ::EmbeddedProto::MessageInterface
         EmbeddedProto::uint32 value = 0;
         value.set(static_cast<uint32_t>(type_));
         return_value = value.serialize_with_id(static_cast<uint32_t>(id::TYPE), buffer);
+      }
+
+      if((static_cast<MessageOrigin>(0) != origin_) && (::EmbeddedProto::Error::NO_ERRORS == return_value))
+      {
+        EmbeddedProto::uint32 value = 0;
+        value.set(static_cast<uint32_t>(origin_));
+        return_value = value.serialize_with_id(static_cast<uint32_t>(id::ORIGIN), buffer);
       }
 
       if(::EmbeddedProto::Error::NO_ERRORS == return_value)
@@ -165,6 +193,23 @@ class MessageWrapper final: public ::EmbeddedProto::MessageInterface
             }
             break;
 
+          case id::ORIGIN:
+            if(::EmbeddedProto::WireFormatter::WireType::VARINT == wire_type)
+            {
+              uint32_t value = 0;
+              return_value = ::EmbeddedProto::WireFormatter::DeserializeVarint(buffer, value);
+              if(::EmbeddedProto::Error::NO_ERRORS == return_value)
+              {
+                set_origin(static_cast<MessageOrigin>(value));
+              }
+            }
+            else
+            {
+              // Wire type does not match field.
+              return_value = ::EmbeddedProto::Error::INVALID_WIRETYPE;
+            }
+            break;
+
           case id::PAYLOAD:
             return_value = payload_.deserialize_check_type(buffer, wire_type);
             break;
@@ -194,6 +239,7 @@ class MessageWrapper final: public ::EmbeddedProto::MessageInterface
     void clear() override
     {
       clear_type();
+      clear_origin();
       clear_payload();
 
     }
@@ -201,6 +247,7 @@ class MessageWrapper final: public ::EmbeddedProto::MessageInterface
     private:
 
       PBMessageType type_ = static_cast<PBMessageType>(0);
+      MessageOrigin origin_ = static_cast<MessageOrigin>(0);
       ::EmbeddedProto::FieldBytes<payload_LENGTH> payload_;
 
 };

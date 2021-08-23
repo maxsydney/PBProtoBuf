@@ -64,7 +64,7 @@ void Readable::clear()
   write_index_ = 0;
 }
 
-bool Readable::push(uint8_t& byte)
+bool Readable::push(const uint8_t& byte)
 {
   bool return_value = MAX_SIZE > write_index_;
   if(return_value)
