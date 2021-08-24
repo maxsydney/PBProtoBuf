@@ -23,7 +23,9 @@ enum MessageOrigin {
   SensorManager = 2;
   Controller = 3;
   Webserver = 4;
-  Webclient = 5;
+  OneWireBus = 5;
+  Log = 6;
+  Webclient = 7;
 }
 
 message MessageWrapper {

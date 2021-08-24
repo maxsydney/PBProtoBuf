@@ -70,7 +70,9 @@ enum class MessageOrigin : uint32_t
   SensorManager = 2,
   Controller = 3,
   Webserver = 4,
-  Webclient = 5
+  OneWireBus = 5,
+  Log = 6,
+  Webclient = 7
 };
 
 template<uint32_t payload_LENGTH>
