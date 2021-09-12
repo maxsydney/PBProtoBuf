@@ -55,15 +55,17 @@ enum class ControllerDataRequestType : uint32_t
 
 enum class ComponentState : uint32_t
 {
-  OFF_STATE = 0,
-  ON_STATE = 1
+  STATE_UNKNOWN = 0,
+  OFF_STATE = 1,
+  ON_STATE = 2
 };
 
 enum class PumpMode : uint32_t
 {
-  PUMP_OFF = 0,
-  ACTIVE_CONTROL = 1,
-  MANUAL_CONTROL = 2
+  PUMP_MODE_UNKNOWN = 0,
+  PUMP_OFF = 1,
+  ACTIVE_CONTROL = 2,
+  MANUAL_CONTROL = 3
 };
 
 class PumpSpeeds final: public ::EmbeddedProto::MessageInterface
