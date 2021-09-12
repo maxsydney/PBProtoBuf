@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+enum ControllerDataRequestType {
+    NONE = 0;
+    TUNING = 1;
+    SETTINGS = 2;
+    PERIPHERAL_STATE = 3;
+}
+
+enum ComponentState {
+  STATE_UNKNOWN = 0;
+  OFF_STATE = 1;
+  ON_STATE = 2;
+}
+
+enum PumpMode {
+  PUMP_MODE_UNKNOWN = 0;
+  PUMP_OFF = 1;
+  ACTIVE_CONTROL = 2;
+  MANUAL_CONTROL = 3;
+};
+
+message PumpSpeeds {
+  double refluxPumpSpeed = 1;
+  double productPumpSpeed = 2;
+}
+
+message ControllerSettings {
+  PumpMode refluxPumpMode = 1;
+  PumpMode productPumpMode = 2;
+  PumpSpeeds manualPumpSpeeds = 3;
+}
+
+message ControllerState {
+    double propOutput = 1;
+    double integralOutput = 2;
+    double derivOutput = 3;
+    double totalOutput = 4;
+    uint32 timeStamp = 5;
+}
+
+message ControllerTuning {
+  double setpoint = 1;
+  double PGain = 2;
+  double IGain = 3;
+  double DGain = 4;
+  double LPFsampleFreq = 5;
+  double LPFcutoffFreq = 6;
+}
+
+message ControllerCommand {
+  ComponentState fanState = 1;
+  double LPElementDutyCycle = 2;
+  double HPElementDutyCycle = 3;
+}
+
+message ControllerDataRequest {
+  ControllerDataRequestType requestType = 1;
+}

@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+enum PBMessageType {
+  Unknown = 0;
+  General = 1;
+  TemperatureData = 2;
+  FlowrateData = 3;
+  ControllerTuning = 4;
+  ControllerCommand = 5;
+  ControllerSettings = 6;
+  ControllerDataRequest = 7;
+  SensorManagerCommand = 8;
+  DeviceData = 9;
+  AssignSensor = 10;
+  ConcentrationData = 11;
+  ControllerState = 12;
+  SocketLog = 13;
+}
+
+enum MessageOrigin {
+  OriginUnknown = 0;
+  DistillerManager = 1;
+  SensorManager = 2;
+  Controller = 3;
+  Webserver = 4;
+  OneWireBus = 5;
+  Log = 6;
+  Webclient = 7;
+}
+
+message MessageWrapper {
+    PBMessageType type = 1;
+    MessageOrigin origin = 2;
+    bytes payload = 3;
+}
