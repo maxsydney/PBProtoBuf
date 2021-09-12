@@ -13,6 +13,9 @@ def compileSingleFile(protoFile):
     Compile a single .proto file in lib/PBProtoBuf/Generated/Proto into the corresponding 
     cpp header file in lib/PBProtoBuf/Generated
     """
+
+    # TODO: Add a check here that the correct virtual env is active
+    
     # Check PBPATH exists
     if os.environ.get('PBPATH') == None:
         raise ValueError("PBPATH variable is not set")
